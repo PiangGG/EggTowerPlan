@@ -19,5 +19,6 @@ UENUM(BlueprintType)
 enum class EControllerState :uint8
 {
 	EBuild,
-	ECombat
+	ECombat,
+	ENULL
 };
