@@ -21,7 +21,7 @@ EControllerState UStateComponent::GetControllerState()
 
 void UStateComponent::SetControllerState(EControllerState ControllerState)
 {
-	if (GetOwner())
+	/*if (GetOwner())
 	{
 		if (Cast<APlayerController>(GetOwner()))
 		{
@@ -35,7 +35,7 @@ void UStateComponent::SetControllerState(EControllerState ControllerState)
 			{
 				Character_RTS = Cast<AETPCharacter>(ControedPawn);
 			}
-			Cast<APlayerController>(GetOwner())->Possess(Cast<APawn>(Character_Moba));
+			
 		}
 		else
 		{
@@ -56,7 +56,7 @@ void UStateComponent::SetControllerState(EControllerState ControllerState)
 			break;
 		default:
 			break;
-	}
+	}*/
 	State = ControllerState;
 }
 

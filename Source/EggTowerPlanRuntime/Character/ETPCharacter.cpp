@@ -3,3 +3,13 @@
 
 #include "ETPCharacter.h"
 
+#include "AbilitySystem/LyraAbilitySystemComponent.h"
+#include "Components/GameFrameworkComponentManager.h"
+#include "EggTowerPlanRuntime/Ability/Ability_ModeChange.h"
+#include "Player/LyraPlayerState.h"
+
+AETPCharacter::AETPCharacter(const FObjectInitializer& ObjectInitializer)
+: Super(ObjectInitializer)
+{
+	
+}
