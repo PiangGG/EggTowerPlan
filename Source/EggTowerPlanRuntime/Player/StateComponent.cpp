@@ -10,6 +10,7 @@
 UStateComponent::UStateComponent(const FObjectInitializer& ObjectInitializer)
 :Super(ObjectInitializer)
 {
+	SetIsReplicatedByDefault(true);
 	State = EControllerState::EBuild;
 }
 
@@ -20,6 +21,27 @@ EControllerState UStateComponent::GetControllerState()
 
 void UStateComponent::SetControllerState(EControllerState ControllerState)
 {
+	if (GetOwner())
+	{
+		if (Cast<APlayerController>(GetOwner()))
+		{
+			APawn* ControedPawn = Cast<APlayerController>(GetOwner())->GetPawn();
+			if (ControedPawn->GetClass()==Character_Moba_Class&&!Character_Moba)
+			{
+				Character_Moba = Cast<AETPCharacter>(ControedPawn);
+			}
+
+			if (ControedPawn->GetClass()==Character_RTS_Class&&!Character_RTS)
+			{
+				Character_RTS = Cast<AETPCharacter>(ControedPawn);
+			}
+			Cast<APlayerController>(GetOwner())->Possess(Cast<APawn>(Character_Moba));
+		}
+		else
+		{
+			UToolLibrary::DebugLog("UStateComponent 的拥有者不是AplayerController");
+		}
+	}
 	
 	switch (ControllerState)
 	{
