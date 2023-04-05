@@ -10,7 +10,6 @@ public class EggTowerPlanRuntime : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-				//"LyraGame"
 				// ... add public include paths required here ...
 			}
 			);
@@ -47,7 +46,8 @@ public class EggTowerPlanRuntime : ModuleRules
 				"Niagara",
 				"AsyncMixin",
 				"ControlFlows",
-				"LyraGame"
+				"LyraGame",
+				"NavigationSystem",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

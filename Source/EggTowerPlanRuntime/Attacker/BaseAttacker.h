@@ -128,8 +128,8 @@ public:
 	USceneComponent* AttackLocationComp;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Component")
 	UArrowComponent* ArrowComponent;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Component")
-	UHealthComponent* HealthComponent;
+
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Component")
 	TSubclassOf<class ABaseMissile> Missile;
 

@@ -27,15 +27,15 @@ public:
 	void SetControllerState(EControllerState ControllerState);
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="PCState")
-	TSubclassOf<AETPCharacter> Character_RTS_Class;
+	TSubclassOf<ABaseCharacter> Character_RTS_Class;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="PCState")
-	AETPCharacter* Character_RTS;
+	ABaseCharacter* Character_RTS;
 	void ChangeStateRTS();
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="PCState")
-	TSubclassOf<AETPCharacter> Character_Moba_Class;
+	TSubclassOf<ABaseCharacter> Character_Moba_Class;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="PCState")
-	AETPCharacter* Character_Moba;
+	ABaseCharacter* Character_Moba;
 	void ChangeStateMoba();
 
 };

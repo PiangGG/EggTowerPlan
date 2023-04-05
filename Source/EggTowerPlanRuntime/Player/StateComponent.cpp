@@ -3,6 +3,7 @@
 
 #include "StateComponent.h"
 
+#include "EggTowerPlanRuntime/Character/BaseCharacter.h"
 #include "EggTowerPlanRuntime/Character/ETPCharacter.h"
 #include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "EggTowerPlanRuntime/Tool/ToolLibrary.h"
@@ -21,19 +22,19 @@ EControllerState UStateComponent::GetControllerState()
 
 void UStateComponent::SetControllerState(EControllerState ControllerState)
 {
-	/*if (GetOwner())
+	if (GetOwner())
 	{
 		if (Cast<APlayerController>(GetOwner()))
 		{
 			APawn* ControedPawn = Cast<APlayerController>(GetOwner())->GetPawn();
 			if (ControedPawn->GetClass()==Character_Moba_Class&&!Character_Moba)
 			{
-				Character_Moba = Cast<AETPCharacter>(ControedPawn);
+				Character_Moba = Cast<ABaseCharacter>(ControedPawn);
 			}
 
 			if (ControedPawn->GetClass()==Character_RTS_Class&&!Character_RTS)
 			{
-				Character_RTS = Cast<AETPCharacter>(ControedPawn);
+				Character_RTS = Cast<ABaseCharacter>(ControedPawn);
 			}
 			
 		}
@@ -56,7 +57,7 @@ void UStateComponent::SetControllerState(EControllerState ControllerState)
 			break;
 		default:
 			break;
-	}*/
+	}
 	State = ControllerState;
 }
 
@@ -81,7 +82,7 @@ void UStateComponent::ChangeStateMoba()
 			FRotator SpawnRotation = Cast<APlayerController>(GetOwner())->GetPawn()->GetActorRotation();
 			FActorSpawnParameters ActorSpawnParameters;
 
-			Character_Moba = GetWorld()->SpawnActor<AETPCharacter>(Character_Moba_Class,SpawnLocation,SpawnRotation,ActorSpawnParameters);
+			Character_Moba = GetWorld()->SpawnActor<ABaseCharacter>(Character_Moba_Class,SpawnLocation,SpawnRotation,ActorSpawnParameters);
 			
 			if (Cast<APlayerController>(GetOwner())&&Character_Moba)
 			{
@@ -119,7 +120,7 @@ void UStateComponent::ChangeStateRTS()
 			FRotator SpawnRotation = Cast<APlayerController>(GetOwner())->GetPawn()->GetActorRotation();
 			FActorSpawnParameters ActorSpawnParameters;
 
-			Character_RTS = GetWorld()->SpawnActor<AETPCharacter>(Character_RTS_Class,SpawnLocation,SpawnRotation,ActorSpawnParameters);
+			Character_RTS = GetWorld()->SpawnActor<ABaseCharacter>(Character_RTS_Class,SpawnLocation,SpawnRotation,ActorSpawnParameters);
 			
 			if (Cast<APlayerController>(GetOwner())&&Character_RTS)
 			{

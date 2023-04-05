@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+/*
+ * 继承自LyraCharactor
+ */
 #pragma once
 
 #include "CoreMinimal.h"
@@ -17,5 +19,12 @@ class EGGTOWERPLANRUNTIME_API AETPCharacter : public ALyraCharacter
 	
 public:
 	AETPCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual void OnAbilitySystemInitialized() override;
 	
+	virtual void OnAbilitySystemUninitialized() override;
+
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void UnPossessed() override;
+
 };

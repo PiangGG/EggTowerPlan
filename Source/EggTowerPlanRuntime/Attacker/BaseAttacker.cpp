@@ -3,7 +3,6 @@
 
 #include "BaseAttacker.h"
 
-#include "EggTowerPlanRuntime/Component/HealthComponent.h"
 #include "EggTowerPlanRuntime/Map/MapUnit.h"
 #include "EggTowerPlanRuntime/Missile/BaseMissile.h"
 #include "EggTowerPlanRuntime/Tool/ToolLibrary.h"
@@ -47,7 +46,6 @@ ABaseAttacker::ABaseAttacker()
 	ArrowComponent =  CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComp"));
 	ArrowComponent->SetupAttachment(MeshRootComponent);
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComp"));
 }
 
 // Called when the game starts or when spawned

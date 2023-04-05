@@ -3,7 +3,6 @@
 
 #include "BaseEnemy.h"
 
-#include "EggTowerPlanRuntime/Component/HealthComponent.h"
 
 // Sets default values
 ABaseEnemy::ABaseEnemy()
@@ -33,8 +32,6 @@ ABaseEnemy::ABaseEnemy()
 
 	ArrowComponent =  CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComp"));
 	ArrowComponent->SetupAttachment(MeshRootComponent);
-
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComp"));
 }
 
 // Called when the game starts or when spawned

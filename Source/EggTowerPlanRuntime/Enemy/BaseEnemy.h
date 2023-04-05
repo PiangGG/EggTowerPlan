@@ -38,6 +38,4 @@ public:
 	UWidgetComponent* WidgetComp_Cooling;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Component")
 	UArrowComponent* ArrowComponent;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Component")
-	UHealthComponent* HealthComponent;
 };
