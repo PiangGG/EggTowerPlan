@@ -200,10 +200,10 @@ void UETPHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 	}
 	
 
-	if (ensure(!bReadyToBindInputs))
+	/*if (ensure(!bReadyToBindInputs))
 	{
 		bReadyToBindInputs = true;
-	}
+	}*/
  
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(const_cast<APlayerController*>(PC), NAME_BindInputsNow);
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(const_cast<APawn*>(Pawn), NAME_BindInputsNow);
