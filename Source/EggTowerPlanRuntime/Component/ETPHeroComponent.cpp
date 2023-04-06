@@ -344,3 +344,23 @@ TSubclassOf<ULyraCameraMode> UETPHeroComponent::DetermineCameraMode() const
 
 	return nullptr;
 }
+
+void UETPHeroComponent::SetLastFrameLocation(FVector Vector)
+{
+	LastFrameLocation = Vector;
+}
+
+FVector UETPHeroComponent::GetLastFrameLocation()
+{
+	return LastFrameLocation;
+}
+
+FRotator UETPHeroComponent::GetLastFrameRotation()
+{
+	return LastFrameRotation;
+}
+
+void UETPHeroComponent::SetLastFrameRotation(FRotator Rotator)
+{
+	LastFrameRotation = Rotator;
+}

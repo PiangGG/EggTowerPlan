@@ -75,4 +75,11 @@ public:
 	// Default camera mode used by player controlled pawns.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Lyra|Camera")
 	TSubclassOf<ULyraCameraMode> DefaultCameraMode;
+
+	FVector LastFrameLocation = FVector(0, 0, 0);
+	void SetLastFrameLocation(FVector Vector);
+	FVector GetLastFrameLocation();
+	FRotator LastFrameRotation = FRotator(0, 0, 0);
+	void SetLastFrameRotation(FRotator Rotator);
+	FRotator GetLastFrameRotation();
 };

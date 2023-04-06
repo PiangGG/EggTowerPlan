@@ -35,4 +35,14 @@ protected:
 	FRuntimeFloatCurve GroundToDistance;
 
 	virtual FVector GetPivotLocation() const override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Moba|Blend")
+	bool bOpenBlend = true;
+	UPROPERTY(EditDefaultsOnly, Category = "Moba|Blend")
+	float BlendSpeed = 1.0f;
+
+	FVector GetLastFrameLocation();
+	void SetLastFrameLocation(FVector Vector);
+	FRotator GetLastFrameRotation();
+	void SetLastFrameRotation(FRotator Rotator);
 };

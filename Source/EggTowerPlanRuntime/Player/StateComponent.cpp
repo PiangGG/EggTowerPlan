@@ -105,6 +105,11 @@ void UStateComponent::ChangeStateRTS()
 	{
 		if (Cast<APlayerController>(GetOwner()))
 		{
+			if (Character_Moba)
+			{
+				Character_RTS->SetActorLocation(Character_Moba->GetActorLocation());
+			}
+			
 			Cast<APlayerController>(GetOwner())->Possess(Cast<APawn>(Character_RTS));
 		}
 		else
@@ -124,6 +129,11 @@ void UStateComponent::ChangeStateRTS()
 			
 			if (Cast<APlayerController>(GetOwner())&&Character_RTS)
 			{
+				if (Character_Moba)
+				{
+					Character_RTS->SetActorLocation(Character_Moba->GetActorLocation());
+				}
+				
 				Cast<APlayerController>(GetOwner())->Possess(Cast<APawn>(Character_RTS));
 			}else
 			{

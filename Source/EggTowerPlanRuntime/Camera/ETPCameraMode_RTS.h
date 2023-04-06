@@ -22,6 +22,10 @@ protected:
 	virtual void UpdateView(float DeltaTime) override;
 	//~End of ULyraCameraMode interface
 
+	void UpdateForTarget(float DeltaTime);
+	void UpdatePreventPenetration(float DeltaTime);
+	void PreventCameraPenetration(class AActor const& ViewTarget, FVector const& SafeLoc, FVector& CameraLoc, float const& DeltaTime, float& DistBlockedPct, bool bSingleRayOnly);
+
 	UPROPERTY(EditDefaultsOnly, Category = "RTS|CurentRotation")
 	FRotator DefaultPivotRotation;
 
@@ -34,4 +38,14 @@ protected:
 	FRuntimeFloatCurve GroundToDistance;
 
 	virtual FVector GetPivotLocation() const override;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "RTS|Blend")
+	bool bOpenBlend = true;
+	UPROPERTY(EditDefaultsOnly, Category = "RTS|Blend")
+	float BlendSpeed = 1.0f;
+	
+	FVector GetLastFrameLocation();
+	void SetLastFrameLocation(FVector Vector);
+	FRotator GetLastFrameRotation();
+	void SetLastFrameRotation(FRotator Rotator);
 };
