@@ -28,20 +28,9 @@ void AETPCharacter::OnAbilitySystemUninitialized()
 void AETPCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
-	if (ULyraHeroComponent* LyraHeroComp= Cast<ULyraHeroComponent>(GetComponentByClass(ULyraHeroComponent::StaticClass())))
-	{
-		LyraHeroComp->HandleControllerChanged();
-	}
-	
 }
 
 void AETPCharacter::UnPossessed()
 {
 	Super::UnPossessed();
-	
-	if (ULyraHeroComponent* LyraHeroComp= Cast<ULyraHeroComponent>(GetComponentByClass(ULyraHeroComponent::StaticClass())))
-	{
-		LyraHeroComp->HandleControllerChanged();
-	}
 }

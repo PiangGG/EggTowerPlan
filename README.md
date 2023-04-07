@@ -1,12 +1,22 @@
-[EggTowerPlan]
-
-[蛋塔计划]
+[蛋塔计划/EggTowerPlan]
 
 #基于Lyra GameFeatures
 
 需要在Lyra源文件添加注入:LYRAGAME_API 的文件
 /////////////////////////////////////////
 //ALyraGameMode
+//ULyraHealthSet
+//ULyraCombatSet
+//FMappableConfigPair
+//ULyraCameraComponent
+//ULyraExperienceManagerComponent
+//ULyraInputConfig
+//ULyraInputComponent
+//FLyraGameplayTags
+//ULyraGameplayAbility_Interact
+//UAbilityTask_WaitForInteractableTargets
+//UInteractionStatics
+//UAbilityTask_GrantNearbyInteraction
 ////////////////////////////////////////
 
 项目默认设置
