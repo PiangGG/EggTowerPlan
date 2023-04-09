@@ -108,6 +108,7 @@ void UAbilityTask_Interact_SphereTrace::PerformTrace()
 	FHitResult OutHitResult;
 	SphereTrace(OverlapResults,InteractableTargets,OutHitResult, World, TraceStart,InteractionScanRange,TraceProfile.Name, Params);
 
+	UpdateInteractableOptions(InteractionQuery, InteractableTargets);
 #if ENABLE_DRAW_DEBUG
 	if (bShowDebug)
 	{
@@ -119,7 +120,7 @@ void UAbilityTask_Interact_SphereTrace::PerformTrace()
 		}
 		else
 		{
-			UpdateInteractableOptions(InteractionQuery, InteractableTargets);DrawDebugSphere(World, TraceStart, InteractionScanRange, 16, DebugColor, false, InteractionScanRate);
+			DrawDebugSphere(World, TraceStart, InteractionScanRange, 16, DebugColor, false, InteractionScanRate);
 		}
 	}
 #endif // ENABLE_DRAW_DEBUG
