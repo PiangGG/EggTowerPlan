@@ -22,6 +22,7 @@ namespace ETPRTS
 	static const float LookYawRate = 300.0f;
 	static const float LookPitchRate = 165.0f;
 }
+const FName UETPHeroComponent::NAME_BindInputs("BindInputs");
 
 UETPHeroComponent::UETPHeroComponent(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -205,8 +206,8 @@ void UETPHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 		bReadyToBindInputs = true;
 	}*/
  
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(const_cast<APlayerController*>(PC), NAME_BindInputsNow);
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(const_cast<APawn*>(Pawn), NAME_BindInputsNow);
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(const_cast<APlayerController*>(PC), NAME_BindInputs);
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(const_cast<APawn*>(Pawn), NAME_BindInputs);
 
 }
 

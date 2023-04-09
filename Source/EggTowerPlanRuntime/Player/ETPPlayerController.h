@@ -14,4 +14,7 @@ class EGGTOWERPLANRUNTIME_API AETPPlayerController : public ALyraPlayerControlle
 {
 	GENERATED_BODY()
 	
+	AETPPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+public:
+	virtual ULyraAbilitySystemComponent* GetLyraAbilitySystemComponent() const override;
 };
