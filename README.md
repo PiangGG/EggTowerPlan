@@ -1,6 +1,6 @@
 # [蛋塔计划/EggTowerPlan]<br>
 
-![Image](https://github.com/PiangGG/EggTowerPlan/blob/Piang/Resources/Ant.jpg "ETP")  <br>
+![Image](https://github.com/PiangGG/EggTowerPlan/raw/ETP/Resources/Ant.jpg "ETP")  <br>
 
 ## 基于Lyra GameFeatures<br>
 
