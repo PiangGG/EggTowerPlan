@@ -12,6 +12,7 @@ Platforms/
 
 Plugins/*/Binaries/*
 Plugins/*/Intermediate/*
+Plugins/*/Content/*
 
 Plugins/GameFeatures/ShooterCore/*
 Plugins/GameFeatures/ShooterExplorer/*
