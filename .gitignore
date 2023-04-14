@@ -4,7 +4,7 @@
 Pak/
 Binaries/
 Build/
-Content/
+/Content/
 
 DerivedDataCache/
 Intermediate/
