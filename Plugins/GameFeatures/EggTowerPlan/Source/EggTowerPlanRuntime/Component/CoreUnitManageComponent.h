@@ -10,6 +10,7 @@
 /**
  * 
  */
+class ACoreUnit;
 struct FChangeCoreUnitMessage;
 UCLASS()
 class EGGTOWERPLANRUNTIME_API UCoreUnitManageComponent : public UGameStateComponent

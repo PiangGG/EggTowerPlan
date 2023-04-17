@@ -4,18 +4,20 @@
 #include "CoreUnit.h"
 
 #include "LyraGameplayTags.h"
+#include "TimerManager.h"
 #include "AbilitySystem/LyraAbilitySystemComponent.h"
 #include "AbilitySystem/Attributes/LyraCombatSet.h"
 #include "AbilitySystem/Attributes/LyraHealthSet.h"
 #include "Character/LyraHealthComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
-#include "EggTowerPlanRuntime/Tool/ETPTags.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "EggTowerPlanRuntime/Tool/StructLib.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "GameModes/LyraExperienceManagerComponent.h"
 #include "Player/LyraPlayerState.h"
-
+#include "NativeGameplayTags.h"
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_CoreUnit_Change);
+
 // Sets default values
 ACoreUnit::ACoreUnit(const FObjectInitializer& ObjectInitializer)
 {

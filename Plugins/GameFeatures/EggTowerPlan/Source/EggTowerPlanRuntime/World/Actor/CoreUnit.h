@@ -6,7 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "Interaction/IInteractableTarget.h"
 #include "CoreUnit.generated.h"
-
+class ULyraHealthSet;
+class ULyraCombatSet;
+class ULyraAbilitySystemComponent;
+class ULyraHealthComponent;
 UCLASS()
 class EGGTOWERPLANRUNTIME_API ACoreUnit : public AActor, public IInteractableTarget
 {
@@ -31,7 +34,7 @@ public:
 	
 	virtual void GatherInteractionOptions(const FInteractionQuery& InteractQuery, FInteractionOptionBuilder& InteractionBuilder) override;
 
-	void OnExperienceLoaded(const ULyraExperienceDefinition*);
+	void OnExperienceLoaded(const class ULyraExperienceDefinition*);
 
 	UFUNCTION()
 	virtual void OnDeathFinished(AActor* OwningActor);
