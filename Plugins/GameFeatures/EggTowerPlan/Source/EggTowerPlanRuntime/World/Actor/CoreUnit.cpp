@@ -36,6 +36,14 @@ ACoreUnit::ACoreUnit(const FObjectInitializer& ObjectInitializer)
 	HealthComponent = CreateDefaultSubobject<ULyraHealthComponent>(TEXT("HealthComponent"));
 	HealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
 	HealthComponent->OnDeathFinished.AddDynamic(this, &ThisClass::OnDeathFinished);
+
+	CollsionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollsionComp"));
+	CollsionComp->SetCollisionProfileName(FName("Interactable_BlockDynamic"));
+	CollsionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollsionComp->bFillCollisionUnderneathForNavmesh = false;
+	RootComponent = CollsionComp;
+	Mesh->SetupAttachment(CollsionComp);
+	//CollsionComp->SetSphereRadius(128.0);
 }
 
 // Called when the game starts or when spawned

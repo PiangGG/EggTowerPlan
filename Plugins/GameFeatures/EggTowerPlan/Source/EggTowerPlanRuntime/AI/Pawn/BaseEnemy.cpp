@@ -22,6 +22,12 @@ ABaseEnemy::ABaseEnemy(const FObjectInitializer& ObjectInitializer)
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
+	AttackBoxCollsion = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("UBoxComponent"));
+	AttackBoxCollsion->SetIsReplicated(true);
+	AttackBoxCollsion->SetupAttachment(GetMesh(),DefaultAttackSocket);
+	AttackBoxCollsion->SetCollisionProfileName(FName("Interactable_BlockDynamic"));
+	AttackBoxCollsion->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	HealthSet = CreateDefaultSubobject<ULyraHealthSet>(TEXT("HealthSet"));
 	CombatSet = CreateDefaultSubobject<ULyraCombatSet>(TEXT("CombatSet"));
 }
@@ -32,6 +38,9 @@ void ABaseEnemy::PostInitializeComponents()
 
 	check(AbilitySystemComponent);
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+	check(AttackBoxCollsion);
+	AttackBoxCollsion->OnComponentHit.AddDynamic(this,&ThisClass::Attack);
 }
 
 void ABaseEnemy::OnExperienceLoaded(const ULyraExperienceDefinition*)
@@ -151,6 +160,43 @@ UAnimMontage* ABaseEnemy::GetAnimMontage_Implementation()
 float ABaseEnemy::GetMaxAttackLength_Implementation()
 {
 	return MaxAttackLength;
+}
+
+void ABaseEnemy::AttackStart_Implementation(FName Selection,FName AttackSocket)
+{
+	if (AttackBoxCollsion)
+	{
+		if (AttackSocket.IsValid())
+		{
+			AttackBoxCollsion->SetupAttachment(GetMesh(),AttackSocket);
+		}
+		AttackBoxCollsion->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+}
+
+void ABaseEnemy::Attack_Implementation(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (Hit.bBlockingHit&&OtherActor)
+	{
+		ULyraAbilitySystemComponent* ASC = Cast<ULyraAbilitySystemComponent>(OtherActor->GetComponentByClass(ULyraAbilitySystemComponent::StaticClass()));
+		if (ASC&&IsValid(GameplayEffect))
+		{
+			ASC->BP_ApplyGameplayEffectToTarget(GameplayEffect,ASC,1,FGameplayEffectContextHandle());
+			UE_LOG(LogTemp,Warning,TEXT("%s"),*OtherActor->GetName());
+			AttackEnd("");
+		}
+	}
+}
+
+void ABaseEnemy::AttackEnd_Implementation(FName Selection)
+{
+	AttackBoxCollsion->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ABaseEnemy::BeHit_Implementation(FName Selection)
+{
+	SetCurrentAiState(EEnemyState::EBeHit);
 }
 
 void ABaseEnemy::Tick(float DeltaTime)

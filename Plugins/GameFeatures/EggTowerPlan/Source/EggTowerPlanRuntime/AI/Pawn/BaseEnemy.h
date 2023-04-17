@@ -5,16 +5,24 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayCueInterface.h"
+#include "GameplayEffect.h"
 #include "ModularCharacter.h"
+#include "Components/BoxComponent.h"
 #include "EggTowerPlanRuntime/AI/Interface/EnemyInterface.h"
+#include "EggTowerPlanRuntime/Interaction/Interface/CombatInterface.h"
+#include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "Teams/LyraTeamAgentInterface.h"
 #include "BaseEnemy.generated.h"
 
 /**
  * 
  */
+class ULyraAbilitySystemComponent;
+class ULyraExperienceDefinition;
+class ULyraHealthSet;
+class ULyraCombatSet;
 UCLASS(Blueprintable, BlueprintType)
-class EGGTOWERPLANRUNTIME_API ABaseEnemy : public AModularCharacter, public IEnemyInterface ,public IAbilitySystemInterface,public ILyraTeamAgentInterface, public IGameplayCueInterface
+class EGGTOWERPLANRUNTIME_API ABaseEnemy : public AModularCharacter, public IEnemyInterface ,public ICombatInterface,public IAbilitySystemInterface,public ILyraTeamAgentInterface, public IGameplayCueInterface
 {
 	GENERATED_BODY()
 public:
@@ -23,6 +31,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "ETP|Enemy")
 	ULyraAbilitySystemComponent* AbilitySystemComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "ETP|Enemy")
+	UBoxComponent* AttackBoxCollsion;
+	
 	virtual void PostInitializeComponents() override;
 	void OnExperienceLoaded(const ULyraExperienceDefinition*);
 
@@ -59,6 +70,7 @@ public:
 	FORCEINLINE FVector GetTargetMoveLocation() const{ return  TargeLocation;}
 	UFUNCTION(BlueprintCallable, Category = "Enemy")
 	FORCEINLINE FVector GetTargetLastMoveLocation() const{ return  TargetLastLocation;}
+
 public:
 	virtual void Tick(float DeltaTime) override;
 
@@ -89,6 +101,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=IEnemyInterface)
 	float MaxAttackLength = 50.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=IEnemyInterface)
+	FName DefaultAttackSocket = "DefaultAttackSocket";
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentAIState)
 	EEnemyState CurrentAIState;
@@ -101,6 +116,17 @@ public:
 
 	//UFUNCTION(BlueprintCallable)
 	float GetMaxAttackLength_Implementation() override;
+
+	/*CombatInterface*/
+	void AttackStart_Implementation(FName Selection,FName AttackSocket = "");
+	UFUNCTION(BlueprintNativeEvent)
+	void Attack(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
+	void AttackEnd_Implementation(FName Selection);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=Attack)
+	TSubclassOf<UGameplayEffect> GameplayEffect;
+	
+	virtual void BeHit_Implementation(FName Selection) override;
 };
 
 

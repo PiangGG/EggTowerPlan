@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/ShapeComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "Interaction/IInteractableTarget.h"
 #include "CoreUnit.generated.h"
@@ -65,4 +67,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ETP|CoreUnit", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ULyraHealthComponent> HealthComponent;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
+	USphereComponent* CollsionComp;
 };
