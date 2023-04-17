@@ -3,11 +3,11 @@
 
 #include "CoreUnitManageComponent.h"
 #include "NativeGameplayTags.h"
-#include "EggTowerPlanRuntime/Tool/ETPTags.h"
 #include "EggTowerPlanRuntime/Tool/StructLib.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_CoreUnit_Change,"ETP.CoreUnit.ChangeCoreUnitNumber");
+//UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_CoreUnit_Change,"ETP.CoreUnit.ChangeCoreUnitNumber");
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_CoreUnit_Change);
 
 UCoreUnitManageComponent::UCoreUnitManageComponent(const FObjectInitializer& ObjectInitializer)
 :Super(ObjectInitializer)
