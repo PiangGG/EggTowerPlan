@@ -122,7 +122,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void Attack(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
 	void AttackEnd_Implementation(FName Selection);
-
+	
+	FTimerHandle TimerHandle_Attacking;
+	void UpdateAttack(FName AttackSocket);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=Attack)
 	TSubclassOf<UGameplayEffect> GameplayEffect;
 	

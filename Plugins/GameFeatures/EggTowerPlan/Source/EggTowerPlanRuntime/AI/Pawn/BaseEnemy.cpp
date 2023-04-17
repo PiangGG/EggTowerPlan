@@ -25,11 +25,13 @@ ABaseEnemy::ABaseEnemy(const FObjectInitializer& ObjectInitializer)
 	AttackBoxCollsion = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("UBoxComponent"));
 	AttackBoxCollsion->SetIsReplicated(true);
 	AttackBoxCollsion->SetupAttachment(GetMesh(),DefaultAttackSocket);
-	AttackBoxCollsion->SetCollisionProfileName(FName("Interactable_BlockDynamic"));
+	AttackBoxCollsion->SetCollisionProfileName(FName("ETP_BuildProfile"));
 	AttackBoxCollsion->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	HealthSet = CreateDefaultSubobject<ULyraHealthSet>(TEXT("HealthSet"));
 	CombatSet = CreateDefaultSubobject<ULyraCombatSet>(TEXT("CombatSet"));
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABaseEnemy::PostInitializeComponents()
@@ -164,34 +166,60 @@ float ABaseEnemy::GetMaxAttackLength_Implementation()
 
 void ABaseEnemy::AttackStart_Implementation(FName Selection,FName AttackSocket)
 {
-	if (AttackBoxCollsion)
+	/*if (AttackBoxCollsion)
 	{
 		if (AttackSocket.IsValid())
 		{
 			AttackBoxCollsion->SetupAttachment(GetMesh(),AttackSocket);
 		}
 		AttackBoxCollsion->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	}
+	}*/
+	FTimerDelegate UpdateAttackDelegate = FTimerDelegate::CreateUObject(this, &ABaseEnemy::UpdateAttack,AttackSocket);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_Attacking,UpdateAttackDelegate,0.1f,true);
 }
 
 void ABaseEnemy::Attack_Implementation(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (Hit.bBlockingHit&&OtherActor)
-	{
-		ULyraAbilitySystemComponent* ASC = Cast<ULyraAbilitySystemComponent>(OtherActor->GetComponentByClass(ULyraAbilitySystemComponent::StaticClass()));
-		if (ASC&&IsValid(GameplayEffect))
-		{
-			ASC->BP_ApplyGameplayEffectToTarget(GameplayEffect,ASC,1,FGameplayEffectContextHandle());
-			UE_LOG(LogTemp,Warning,TEXT("%s"),*OtherActor->GetName());
-			AttackEnd("");
-		}
-	}
+	//if (Hit.bBlockingHit&&OtherActor)
+	//{
+	//	ULyraAbilitySystemComponent* ASC = Cast<ULyraAbilitySystemComponent>(OtherActor->GetComponentByClass(ULyraAbilitySystemComponent::StaticClass()));
+	//	{
+	//		ASC->BP_ApplyGameplayEffectToTarget(GameplayEffect,ASC,1,FGameplayEffectContextHandle());
+	//		UE_LOG(LogTemp,Warning,TEXT("%s"),*OtherActor->GetName());
+	//		AttackEnd_Implementation("");
+	//	}
+	//}
 }
 
 void ABaseEnemy::AttackEnd_Implementation(FName Selection)
 {
-	AttackBoxCollsion->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//AttackBoxCollsion->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Attacking);
+}
+
+void ABaseEnemy::UpdateAttack(FName AttackSocket)
+{
+	TArray<FHitResult>HitResults;
+	FVector StartLocation = GetMesh()->GetSocketLocation(AttackSocket);
+	FVector EndLocation = StartLocation+GetActorForwardVector()*100.0f;
+
+	FCollisionShape ColSphere = FCollisionShape::MakeSphere(50.0);
+	DrawDebugCylinder(GetWorld(),StartLocation,EndLocation,50.0,8,FColor::Green,false,3.0f);
+	GetWorld()->SweepMultiByChannel(HitResults,StartLocation,EndLocation,FQuat::Identity,ECollisionChannel::ECC_GameTraceChannel6,ColSphere);
+	if (!HitResults.IsEmpty())
+	{
+		for (auto HitResult : HitResults)
+		{
+			ULyraAbilitySystemComponent* ASC = Cast<ULyraAbilitySystemComponent>(HitResult.GetActor()->GetComponentByClass(ULyraAbilitySystemComponent::StaticClass()));
+			{
+				ASC->BP_ApplyGameplayEffectToTarget(GameplayEffect,ASC,1,FGameplayEffectContextHandle());
+				UE_LOG(LogTemp,Warning,TEXT("%s"),*HitResult.GetActor()->GetName());
+			}
+		}
+		
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Attacking);
+	}
 }
 
 void ABaseEnemy::BeHit_Implementation(FName Selection)
