@@ -43,6 +43,8 @@ ACoreUnit::ACoreUnit(const FObjectInitializer& ObjectInitializer)
 	CollsionComp->bFillCollisionUnderneathForNavmesh = false;
 	RootComponent = CollsionComp;
 	Mesh->SetupAttachment(CollsionComp);
+	Mesh->bCastDynamicShadow = false;
+	Mesh->bCastStaticShadow = false;
 	//CollsionComp->SetSphereRadius(128.0);
 
 	HPBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
@@ -133,6 +135,55 @@ void ACoreUnit::OnDeathFinished(AActor* OwningActor)
 void ACoreUnit::OnDeathStarted(AActor* OwningActor)
 {
 	
+}
+
+UMaterialInterface* ACoreUnit::GetInteractioningMaterial_Implementation()
+{
+	return Overlaymaterial;
+}
+
+void ACoreUnit::SetSelfInteractioning_Implementation(bool bInteractioning)
+{
+	if (bInteractioning)
+	{
+		TArray<UActorComponent*> Meshs = GetComponentsByClass(USkeletalMeshComponent::StaticClass());
+		for (auto ActorComponent : Meshs)
+		{
+			if (USkeletalMeshComponent * MeshItem = Cast<USkeletalMeshComponent>(ActorComponent))
+			{
+				MeshItem->SetOverlayMaterial(GetInteractioningMaterial_Implementation());
+			}
+		}
+
+		TArray<UActorComponent*> Meshs2 = GetComponentsByClass(UStaticMeshComponent::StaticClass());
+		for (auto ActorComponent : Meshs2)
+		{
+			if (UStaticMeshComponent * MeshItem = Cast<UStaticMeshComponent>(ActorComponent))
+			{
+				MeshItem->SetOverlayMaterial(GetInteractioningMaterial_Implementation());
+			}
+		}
+	}
+	else
+	{
+		TArray<UActorComponent*> Meshs = GetComponentsByClass(USkeletalMeshComponent::StaticClass());
+		for (auto ActorComponent : Meshs)
+		{
+			if (USkeletalMeshComponent * MeshItem = Cast<USkeletalMeshComponent>(ActorComponent))
+			{
+				MeshItem->SetOverlayMaterial(nullptr);
+			}
+		}
+
+		TArray<UActorComponent*> Meshs2 = GetComponentsByClass(UStaticMeshComponent::StaticClass());
+		for (auto ActorComponent : Meshs2)
+		{
+			if (UStaticMeshComponent * MeshItem = Cast<UStaticMeshComponent>(ActorComponent))
+			{
+				MeshItem->SetOverlayMaterial(nullptr);
+			}
+		}
+	}
 }
 
 void ACoreUnit::DisableMovementAndCollision()

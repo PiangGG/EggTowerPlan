@@ -262,7 +262,7 @@ void UETPRTSComponent::InitializePlayerInput(UInputComponent* PlayerInputCompone
 						FModifyContextOptions Options = {};
 						Options.bIgnoreAllPressedKeysUntilRelease = false;
 						// Actually add the config to the local player							
-						Subsystem->AddPlayerMappableConfig(Pair.Config.LoadSynchronous(), Options);	
+						//Subsystem->AddPlayerMappableConfig(Pair.Config.LoadSynchronous(), Options);	
 					}
 				}
 				

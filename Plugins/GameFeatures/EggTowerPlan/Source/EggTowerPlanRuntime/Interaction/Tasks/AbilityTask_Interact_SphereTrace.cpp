@@ -3,7 +3,7 @@
 
 #include "AbilityTask_Interact_SphereTrace.h"
 
-#include "EggTowerPlanRuntime/Interaction/Interface/InteractionInterface.h"
+#include "Interaction/IInteractableTarget.h"
 #include "Interaction/InteractionStatics.h"
 
 UAbilityTask_Interact_SphereTrace::UAbilityTask_Interact_SphereTrace(const FObjectInitializer& ObjectInitializer)
@@ -115,21 +115,25 @@ void UAbilityTask_Interact_SphereTrace::PerformTrace()
 	{
 		LastOutHitResult = CurrentOutHitResult;
 		CurrentOutHitResult = OutHitResult;
-		if (LastOutHitResult.GetActor()&&LastOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		if (LastOutHitResult.GetActor()&&LastOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractableTarget::StaticClass()))
 		{
-			Cast<IInteractionInterface>(LastOutHitResult.GetActor())->SetSelfInteractioning(false);
+			Cast<IInteractableTarget>(LastOutHitResult.GetActor())->Execute_SetSelfInteractioning(LastOutHitResult.GetActor(),false);
 		}
 
-		if (CurrentOutHitResult.GetActor()&&CurrentOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		if (CurrentOutHitResult.GetActor()&&CurrentOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractableTarget::StaticClass()))
 		{
-			Cast<IInteractionInterface>(CurrentOutHitResult.GetActor())->SetSelfInteractioning(true);
+			Cast<IInteractableTarget>(CurrentOutHitResult.GetActor())->Execute_SetSelfInteractioning(CurrentOutHitResult.GetActor(),true);
 		}
 	}
 	else
 	{
-		if (LastOutHitResult.GetActor()&&LastOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		if (LastOutHitResult.GetActor()&&LastOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractableTarget::StaticClass()))
 		{
-			Cast<IInteractionInterface>(LastOutHitResult.GetActor())->SetSelfInteractioning(false);
+			Cast<IInteractableTarget>(LastOutHitResult.GetActor())->Execute_SetSelfInteractioning(LastOutHitResult.GetActor(),false);
+		}
+		if (CurrentOutHitResult.GetActor()&&CurrentOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractableTarget::StaticClass()))
+		{
+			Cast<IInteractableTarget>(CurrentOutHitResult.GetActor())->Execute_SetSelfInteractioning(CurrentOutHitResult.GetActor(),false);
 		}
 	}
 #if ENABLE_DRAW_DEBUG

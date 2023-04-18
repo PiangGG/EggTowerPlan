@@ -31,7 +31,8 @@ private:
 };
 
 /**  */
-UINTERFACE(MinimalAPI, meta = (CannotImplementInterfaceInBlueprint))
+//UINTERFACE(MinimalAPI, meta = (CannotImplementInterfaceInBlueprint))
+UINTERFACE(MinimalAPI)
 class UInteractableTarget : public UInterface
 {
 	GENERATED_BODY()
@@ -48,4 +49,10 @@ public:
 
 	/**  */
 	virtual void CustomizeInteractionEventData(const FGameplayTag& InteractionEventTag, FGameplayEventData& InOutEventData) { }
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category=IInteractableTarget)
+	UMaterialInterface* GetInteractioningMaterial();
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category=IInteractableTarget)
+	void SetSelfInteractioning(bool bInteractioning);
 };

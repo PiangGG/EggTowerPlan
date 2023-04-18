@@ -74,4 +74,12 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
 	UWidgetComponent *HPBar;
+
+	//IInteractableTarget
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
+	UMaterialInterface* Overlaymaterial;
+	
+	UMaterialInterface* GetInteractioningMaterial_Implementation();
+
+	virtual void SetSelfInteractioning_Implementation(bool bInteractioning) override;
 };

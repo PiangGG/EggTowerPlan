@@ -22,6 +22,8 @@ struct FActorInitStateChangedParams;
 struct FFrame;
 struct FGameplayTag;
 struct FInputActionValue;
+struct FLoadedMappableConfigPair;
+struct FMappableConfigPair;
 
 /**
  * Component that sets up input and camera handling for player controlled pawns (or bots that simulate players).
