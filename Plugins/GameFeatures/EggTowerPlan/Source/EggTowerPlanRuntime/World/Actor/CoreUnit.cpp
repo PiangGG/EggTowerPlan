@@ -44,6 +44,9 @@ ACoreUnit::ACoreUnit(const FObjectInitializer& ObjectInitializer)
 	RootComponent = CollsionComp;
 	Mesh->SetupAttachment(CollsionComp);
 	//CollsionComp->SetSphereRadius(128.0);
+
+	HPBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
+	HPBar->SetupAttachment(CollsionComp);
 }
 
 // Called when the game starts or when spawned

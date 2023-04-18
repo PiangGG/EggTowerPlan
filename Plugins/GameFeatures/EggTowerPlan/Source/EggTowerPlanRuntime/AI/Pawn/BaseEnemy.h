@@ -125,6 +125,8 @@ public:
 	
 	FTimerHandle TimerHandle_Attacking;
 	void UpdateAttack(FName AttackSocket);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=IEnemyInterface)
+	bool bDrawDebugAttack = false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=Attack)
 	TSubclassOf<UGameplayEffect> GameplayEffect;

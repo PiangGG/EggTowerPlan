@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ShapeComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Interaction/IInteractableTarget.h"
 #include "CoreUnit.generated.h"
@@ -54,9 +55,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	FInteractionOption Option;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=AbilitySet)
 	ULyraHealthSet* HealthSet;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=AbilitySet)
 	ULyraCombatSet* CombatSet;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -70,4 +71,7 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
 	USphereComponent* CollsionComp;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
+	UWidgetComponent *HPBar;
 };

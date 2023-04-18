@@ -32,6 +32,8 @@ ABaseEnemy::ABaseEnemy(const FObjectInitializer& ObjectInitializer)
 	CombatSet = CreateDefaultSubobject<ULyraCombatSet>(TEXT("CombatSet"));
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GetCharacterMovement()->bUseRVOAvoidance = true;
 }
 
 void ABaseEnemy::PostInitializeComponents()
@@ -205,7 +207,11 @@ void ABaseEnemy::UpdateAttack(FName AttackSocket)
 	FVector EndLocation = StartLocation+GetActorForwardVector()*100.0f;
 
 	FCollisionShape ColSphere = FCollisionShape::MakeSphere(50.0);
-	DrawDebugCylinder(GetWorld(),StartLocation,EndLocation,50.0,8,FColor::Green,false,3.0f);
+	if (bDrawDebugAttack)
+	{
+		DrawDebugCylinder(GetWorld(),StartLocation,EndLocation,50.0,8,FColor::Green,false,3.0f);
+	}
+	
 	GetWorld()->SweepMultiByChannel(HitResults,StartLocation,EndLocation,FQuat::Identity,ECollisionChannel::ECC_GameTraceChannel6,ColSphere);
 	if (!HitResults.IsEmpty())
 	{
@@ -214,7 +220,10 @@ void ABaseEnemy::UpdateAttack(FName AttackSocket)
 			ULyraAbilitySystemComponent* ASC = Cast<ULyraAbilitySystemComponent>(HitResult.GetActor()->GetComponentByClass(ULyraAbilitySystemComponent::StaticClass()));
 			{
 				ASC->BP_ApplyGameplayEffectToTarget(GameplayEffect,ASC,1,FGameplayEffectContextHandle());
-				UE_LOG(LogTemp,Warning,TEXT("%s"),*HitResult.GetActor()->GetName());
+				if (bDrawDebugAttack)
+				{
+					UE_LOG(LogTemp,Warning,TEXT("%s"),*HitResult.GetActor()->GetName());
+				}
 			}
 		}
 		

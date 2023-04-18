@@ -26,6 +26,11 @@ class EGGTOWERPLANRUNTIME_API UAbilityTask_Interact_SphereTrace : public UAbilit
 
 	static void SphereTrace(TArray<FOverlapResult>& OverlapResults,TArray<TScriptInterface<IInteractableTarget>>& InteractableTargetsRef,FHitResult& OutHitResult,const UWorld* World, const FVector& Start,float Radius, FName ProfileName, const FCollisionQueryParams Params);
 
+	UPROPERTY()
+	FHitResult CurrentOutHitResult;
+
+	UPROPERTY()
+	FHitResult LastOutHitResult;
 private:
 
 	virtual void OnDestroy(bool AbilityEnded) override;

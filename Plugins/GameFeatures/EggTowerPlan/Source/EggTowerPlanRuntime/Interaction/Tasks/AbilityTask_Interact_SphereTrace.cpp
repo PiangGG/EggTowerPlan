@@ -3,6 +3,7 @@
 
 #include "AbilityTask_Interact_SphereTrace.h"
 
+#include "EggTowerPlanRuntime/Interaction/Interface/InteractionInterface.h"
 #include "Interaction/InteractionStatics.h"
 
 UAbilityTask_Interact_SphereTrace::UAbilityTask_Interact_SphereTrace(const FObjectInitializer& ObjectInitializer)
@@ -109,6 +110,28 @@ void UAbilityTask_Interact_SphereTrace::PerformTrace()
 	SphereTrace(OverlapResults,InteractableTargets,OutHitResult, World, TraceStart,InteractionScanRange,TraceProfile.Name, Params);
 
 	UpdateInteractableOptions(InteractionQuery, InteractableTargets);
+
+	if (InteractableTargets.Num()>0)
+	{
+		LastOutHitResult = CurrentOutHitResult;
+		CurrentOutHitResult = OutHitResult;
+		if (LastOutHitResult.GetActor()&&LastOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		{
+			Cast<IInteractionInterface>(LastOutHitResult.GetActor())->SetSelfInteractioning(false);
+		}
+
+		if (CurrentOutHitResult.GetActor()&&CurrentOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		{
+			Cast<IInteractionInterface>(CurrentOutHitResult.GetActor())->SetSelfInteractioning(true);
+		}
+	}
+	else
+	{
+		if (LastOutHitResult.GetActor()&&LastOutHitResult.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		{
+			Cast<IInteractionInterface>(LastOutHitResult.GetActor())->SetSelfInteractioning(false);
+		}
+	}
 #if ENABLE_DRAW_DEBUG
 	if (bShowDebug)
 	{
