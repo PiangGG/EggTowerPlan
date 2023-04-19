@@ -146,7 +146,8 @@ void ACoreUnit::SetSelfInteractioning_Implementation(bool bInteractioning)
 {
 	if (bInteractioning)
 	{
-		TArray<UActorComponent*> Meshs = GetComponentsByClass(USkeletalMeshComponent::StaticClass());
+		TArray<UActorComponent*> Meshs;
+		GetComponents(USkeletalMeshComponent::StaticClass(),Meshs);
 		for (auto ActorComponent : Meshs)
 		{
 			if (USkeletalMeshComponent * MeshItem = Cast<USkeletalMeshComponent>(ActorComponent))
@@ -155,7 +156,8 @@ void ACoreUnit::SetSelfInteractioning_Implementation(bool bInteractioning)
 			}
 		}
 
-		TArray<UActorComponent*> Meshs2 = GetComponentsByClass(UStaticMeshComponent::StaticClass());
+		TArray<UActorComponent*> Meshs2;
+		GetComponents(UStaticMeshComponent::StaticClass(),Meshs2);
 		for (auto ActorComponent : Meshs2)
 		{
 			if (UStaticMeshComponent * MeshItem = Cast<UStaticMeshComponent>(ActorComponent))
@@ -166,7 +168,8 @@ void ACoreUnit::SetSelfInteractioning_Implementation(bool bInteractioning)
 	}
 	else
 	{
-		TArray<UActorComponent*> Meshs = GetComponentsByClass(USkeletalMeshComponent::StaticClass());
+		TArray<UActorComponent*> Meshs;
+		GetComponents(USkeletalMeshComponent::StaticClass(),Meshs);
 		for (auto ActorComponent : Meshs)
 		{
 			if (USkeletalMeshComponent * MeshItem = Cast<USkeletalMeshComponent>(ActorComponent))
@@ -175,7 +178,8 @@ void ACoreUnit::SetSelfInteractioning_Implementation(bool bInteractioning)
 			}
 		}
 
-		TArray<UActorComponent*> Meshs2 = GetComponentsByClass(UStaticMeshComponent::StaticClass());
+		TArray<UActorComponent*> Meshs2;
+		GetComponents(UStaticMeshComponent::StaticClass(),Meshs2);
 		for (auto ActorComponent : Meshs2)
 		{
 			if (UStaticMeshComponent * MeshItem = Cast<UStaticMeshComponent>(ActorComponent))

@@ -30,7 +30,8 @@ void ALyraWorldCollectable::SetSelfInteractioning_Implementation(bool bInteracti
 {
 	if (bInteractioning)
 	{
-		TArray<UActorComponent*> Meshs = GetComponentsByClass(USkeletalMeshComponent::StaticClass());
+		TArray<UActorComponent*> Meshs;
+		GetComponents(USkeletalMeshComponent::StaticClass(),Meshs);
 
 		for (auto ActorComponent : Meshs)
 		{
@@ -40,7 +41,8 @@ void ALyraWorldCollectable::SetSelfInteractioning_Implementation(bool bInteracti
 			}
 		}
 
-		TArray<UActorComponent*> Meshs2 = GetComponentsByClass(UStaticMeshComponent::StaticClass());
+		TArray<UActorComponent*> Meshs2;
+		GetComponents(UStaticMeshComponent::StaticClass(),Meshs2);
 
 		for (auto ActorComponent : Meshs2)
 		{
@@ -52,7 +54,8 @@ void ALyraWorldCollectable::SetSelfInteractioning_Implementation(bool bInteracti
 	}
 	else
 	{
-		TArray<UActorComponent*> Meshs = GetComponentsByClass(USkeletalMeshComponent::StaticClass());
+		TArray<UActorComponent*> Meshs;
+		GetComponents(USkeletalMeshComponent::StaticClass(),Meshs);
 
 		for (auto ActorComponent : Meshs)
 		{
@@ -62,7 +65,8 @@ void ALyraWorldCollectable::SetSelfInteractioning_Implementation(bool bInteracti
 			}
 		}
 
-		TArray<UActorComponent*> Meshs2 = GetComponentsByClass(UStaticMeshComponent::StaticClass());
+		TArray<UActorComponent*> Meshs2;
+		GetComponents(UStaticMeshComponent::StaticClass(),Meshs2);
 
 		for (auto ActorComponent : Meshs2)
 		{
