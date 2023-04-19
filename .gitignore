@@ -14,7 +14,9 @@ Plugins/*/Binaries/*
 Plugins/*/Intermediate/*
 Plugins/*/Content/*
 
-Plugins/GameFeatures/ShooterCore/*
+Plugins/GameFeatures/ShooterCore/Binaries
+Plugins/GameFeatures/ShooterCore/Intermediate
+
 Plugins/GameFeatures/ShooterExplorer/*
 Plugins/GameFeatures/ShooterMaps/*
 Plugins/GameFeatures/ShooterTests/*
