@@ -14,7 +14,7 @@ class ULyraHealthComponent;
 class USphereComponent;
 class UWidgetComponent;
 UCLASS()
-class EGGTOWERPLANRUNTIME_API ABaseBuild : public AActor, public IInteractableTarget
+class EGGTOWERPLANRUNTIME_API ABaseBuild : public APawn, public IInteractableTarget
 {
 	GENERATED_BODY()
 	

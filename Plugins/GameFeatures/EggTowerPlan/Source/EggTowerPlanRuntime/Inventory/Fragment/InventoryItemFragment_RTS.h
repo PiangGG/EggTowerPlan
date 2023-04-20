@@ -13,5 +13,7 @@ UCLASS()
 class EGGTOWERPLANRUNTIME_API UInventoryItemFragment_RTS : public ULyraInventoryItemFragment
 {
 	GENERATED_BODY()
-	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	int32 Consume = 1;
 };
