@@ -49,7 +49,7 @@ struct FLyraInventoryChangeMessage
 
 /** A single entry in an inventory */
 USTRUCT(BlueprintType)
-struct FLyraInventoryEntry : public FFastArraySerializerItem
+struct LYRAGAME_API FLyraInventoryEntry : public FFastArraySerializerItem
 {
 	GENERATED_BODY()
 
@@ -61,7 +61,7 @@ struct FLyraInventoryEntry : public FFastArraySerializerItem
 private:
 	friend FLyraInventoryList;
 	friend ULyraInventoryManagerComponent;
-
+public:
 	UPROPERTY()
 	TObjectPtr<ULyraInventoryItemInstance> Instance = nullptr;
 
@@ -74,7 +74,7 @@ private:
 
 /** List of inventory items */
 USTRUCT(BlueprintType)
-struct FLyraInventoryList : public FFastArraySerializer
+struct LYRAGAME_API FLyraInventoryList : public FFastArraySerializer
 {
 	GENERATED_BODY()
 
@@ -113,11 +113,11 @@ private:
 private:
 	friend ULyraInventoryManagerComponent;
 
-private:
+public:
 	// Replicated list of items
 	UPROPERTY()
 	TArray<FLyraInventoryEntry> Entries;
-
+private:
 	UPROPERTY(NotReplicated)
 	TObjectPtr<UActorComponent> OwnerComponent;
 };

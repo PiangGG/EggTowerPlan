@@ -3,29 +3,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ShapeComponent.h"
-#include "Components/SphereComponent.h"
-#include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Interaction/IInteractableTarget.h"
-#include "CoreUnit.generated.h"
+#include "BaseBuild.generated.h"
+
 class ULyraHealthSet;
 class ULyraCombatSet;
 class ULyraAbilitySystemComponent;
 class ULyraHealthComponent;
+class USphereComponent;
+class UWidgetComponent;
 UCLASS()
-class EGGTOWERPLANRUNTIME_API ACoreUnit : public AActor, public IInteractableTarget
+class EGGTOWERPLANRUNTIME_API ABaseBuild : public AActor, public IInteractableTarget
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ACoreUnit(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	ABaseBuild(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:	
 	// Called every frame
@@ -37,7 +37,7 @@ public:
 	
 	virtual void GatherInteractionOptions(const FInteractionQuery& InteractQuery, FInteractionOptionBuilder& InteractionBuilder) override;
 
-	void OnExperienceLoaded(const class ULyraExperienceDefinition*);
+	virtual void OnExperienceLoaded(const class ULyraExperienceDefinition* Definition);
 
 	UFUNCTION()
 	virtual void OnDeathFinished(AActor* OwningActor);

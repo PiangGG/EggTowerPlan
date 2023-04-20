@@ -1,26 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CoreUnit.h"
-
+#include "BaseBuild.h"
 #include "LyraGameplayTags.h"
 #include "AbilitySystem/LyraAbilitySystemComponent.h"
 #include "AbilitySystem/Attributes/LyraCombatSet.h"
 #include "AbilitySystem/Attributes/LyraHealthSet.h"
 #include "Character/LyraHealthComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
+#include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "EggTowerPlanRuntime/Ability/Ability_ModeChange.h"
-#include "EggTowerPlanRuntime/Tool/StructLib.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "GameModes/LyraExperienceManagerComponent.h"
 #include "Player/LyraPlayerState.h"
 
-//UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_CoreUnit_Change);
-UE_DEFINE_GAMEPLAY_TAG(TAG_CoreUnit_Change,"ETP.CoreUnit.ChangeCoreUnitNumber");
-// Sets default values
-ACoreUnit::ACoreUnit(const FObjectInitializer& ObjectInitializer)
+ABaseBuild::ABaseBuild(const FObjectInitializer& ObjectInitializer)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	
@@ -51,11 +48,9 @@ ACoreUnit::ACoreUnit(const FObjectInitializer& ObjectInitializer)
 	HPBar->SetupAttachment(CollsionComp);
 }
 
-// Called when the game starts or when spawned
-void ACoreUnit::BeginPlay()
+void ABaseBuild::BeginPlay()
 {
 	Super::BeginPlay();
-
 	if (GetNetMode() != NM_Client)
 	{
 		AGameStateBase* GameState = GetWorld()->GetGameState();
@@ -71,28 +66,20 @@ void ACoreUnit::BeginPlay()
 	}
 }
 
-void ACoreUnit::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void ABaseBuild::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	if (GetWorld())
-	{
-		FChangeCoreUnitMessage Message;
-		Message.CoreUnit = this;
-		Message.CoreUnitChange = ECoreUnitChange::ECoreUnitRemove;
-		UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
-		MessageSystem.BroadcastMessage(TAG_CoreUnit_Change, Message);
-	}
+	
 }
 
-// Called every frame
-void ACoreUnit::Tick(float DeltaTime)
+void ABaseBuild::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-void ACoreUnit::PostInitializeComponents()
+void ABaseBuild::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
@@ -100,49 +87,89 @@ void ACoreUnit::PostInitializeComponents()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
 
-void ACoreUnit::Destroyed()
+void ABaseBuild::Destroyed()
 {
 	Super::Destroyed();
-
-	
 }
 
-void ACoreUnit::GatherInteractionOptions(const FInteractionQuery& InteractQuery,
-                                         FInteractionOptionBuilder& InteractionBuilder)
+void ABaseBuild::GatherInteractionOptions(const FInteractionQuery& InteractQuery,
+	FInteractionOptionBuilder& InteractionBuilder)
 {
 	InteractionBuilder.AddInteractionOption(Option);
 }
 
-void ACoreUnit::OnExperienceLoaded(const ULyraExperienceDefinition*)
+void ABaseBuild::OnExperienceLoaded(const ULyraExperienceDefinition* Definition)
 {
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, ALyraPlayerState::NAME_LyraAbilityReady);
-
-	if (GetWorld())
-	{
-		FChangeCoreUnitMessage Message;
-		Message.CoreUnit = this;
-		Message.CoreUnitChange = ECoreUnitChange::ECoreUnitAdd;
-		UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
-		MessageSystem.BroadcastMessage(TAG_CoreUnit_Change, Message);
-	}
 }
 
-void ACoreUnit::OnDeathFinished(AActor* OwningActor)
+void ABaseBuild::OnDeathFinished(AActor* OwningActor)
 {
 	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::DestroyDueToDeath);
 }
 
-void ACoreUnit::OnDeathStarted(AActor* OwningActor)
+void ABaseBuild::DisableMovementAndCollision()
 {
-	
 }
 
-UMaterialInterface* ACoreUnit::GetInteractioningMaterial_Implementation()
+void ABaseBuild::DestroyDueToDeath()
+{
+	K2_OnDeathFinished();
+
+	UninitAndDestroy();
+}
+
+void ABaseBuild::UninitAndDestroy()
+{
+}
+
+void ABaseBuild::OnDeathStarted(AActor* OwningActor)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		//DetachFromControllerPendingDestroy();
+		SetLifeSpan(0.1f);
+	}
+	if (AbilitySystemComponent)
+	{
+		if (AbilitySystemComponent->GetAvatarActor() == this)
+		{
+			if (!AbilitySystemComponent)
+			{
+				return;
+			}
+			if (AbilitySystemComponent->GetAvatarActor() == GetOwner())
+			{
+				FGameplayTagContainer AbilityTypesToIgnore;
+				AbilityTypesToIgnore.AddTag(FLyraGameplayTags::Get().Ability_Behavior_SurvivesDeath);
+
+				AbilitySystemComponent->CancelAbilities(nullptr, &AbilityTypesToIgnore);
+				AbilitySystemComponent->ClearAbilityInput();
+				AbilitySystemComponent->RemoveAllGameplayCues();
+
+				if (AbilitySystemComponent->GetOwnerActor() != nullptr)
+				{
+					AbilitySystemComponent->SetAvatarActor(nullptr);
+				}
+				else
+				{
+					AbilitySystemComponent->ClearActorInfo();
+				}
+			}
+
+			AbilitySystemComponent = nullptr;
+		}
+	}
+
+	SetActorHiddenInGame(true);
+}
+
+UMaterialInterface* ABaseBuild::GetInteractioningMaterial_Implementation()
 {
 	return Overlaymaterial;
 }
 
-void ACoreUnit::SetSelfInteractioning_Implementation(bool bInteractioning)
+void ABaseBuild::SetSelfInteractioning_Implementation(bool bInteractioning)
 {
 	if (bInteractioning)
 	{
@@ -188,57 +215,5 @@ void ACoreUnit::SetSelfInteractioning_Implementation(bool bInteractioning)
 			}
 		}
 	}
-}
-
-void ACoreUnit::DisableMovementAndCollision()
-{
-}
-
-void ACoreUnit::DestroyDueToDeath()
-{
-	K2_OnDeathFinished();
-
-	UninitAndDestroy();
-}
-
-void ACoreUnit::UninitAndDestroy()
-{
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		//DetachFromControllerPendingDestroy();
-		SetLifeSpan(0.1f);
-	}
-	if (AbilitySystemComponent)
-	{
-		if (AbilitySystemComponent->GetAvatarActor() == this)
-		{
-			if (!AbilitySystemComponent)
-			{
-				return;
-			}
-			if (AbilitySystemComponent->GetAvatarActor() == GetOwner())
-			{
-				FGameplayTagContainer AbilityTypesToIgnore;
-				AbilityTypesToIgnore.AddTag(FLyraGameplayTags::Get().Ability_Behavior_SurvivesDeath);
-
-				AbilitySystemComponent->CancelAbilities(nullptr, &AbilityTypesToIgnore);
-				AbilitySystemComponent->ClearAbilityInput();
-				AbilitySystemComponent->RemoveAllGameplayCues();
-
-				if (AbilitySystemComponent->GetOwnerActor() != nullptr)
-				{
-					AbilitySystemComponent->SetAvatarActor(nullptr);
-				}
-				else
-				{
-					AbilitySystemComponent->ClearActorInfo();
-				}
-			}
-
-			AbilitySystemComponent = nullptr;
-		}
-	}
-
-	SetActorHiddenInGame(true);
 }
 
