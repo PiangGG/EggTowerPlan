@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "GameFramework/Actor.h"
 #include "Interaction/IInteractableTarget.h"
 #include "BaseBuild.generated.h"
@@ -27,6 +28,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -82,4 +85,27 @@ public:
 	UMaterialInterface* GetInteractioningMaterial_Implementation();
 
 	virtual void SetSelfInteractioning_Implementation(bool bInteractioning) override;
+
+	UFUNCTION(BlueprintCallable, Category= "Defense")
+	void SetCurrentAiState(EDefenseState AIState);
+
+	UFUNCTION(BlueprintImplementableEvent, Category= "Defense")
+	void K2_OnSetCurrentAiState(EDefenseState AIState);
+
+private:
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentAIState)
+	EDefenseState CurrentAIState;
+
+public:	
+	UFUNCTION()
+	void OnRep_CurrentAIState(EDefenseState AIState);
+
+	UFUNCTION(BlueprintCallable, Category = "Defense")
+	FORCEINLINE EDefenseState GetCurrentAiState() const { return CurrentAIState;}
+
+	UFUNCTION(BlueprintCallable, Category = "Defense")
+	FORCEINLINE AActor* GetTargetActor() const{ return  TargetActor;}
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Defense)
+	class AActor* TargetActor;
 };

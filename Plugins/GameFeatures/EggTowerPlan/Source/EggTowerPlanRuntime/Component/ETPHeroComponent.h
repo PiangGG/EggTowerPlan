@@ -85,4 +85,12 @@ public:
 	FRotator LastFrameRotation = FRotator(0, 0, 0);
 	void SetLastFrameRotation(FRotator Rotator);
 	FRotator GetLastFrameRotation();
+
+	//当前选择的建筑索引
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Lyra|Build")
+	int32 SelectedBuildIndex = -1;
+	UFUNCTION(BlueprintCallable, Category = "Lyra|Build")
+	int32 GetSelectedBuildIndex();
+	UFUNCTION(BlueprintCallable, Category = "Lyra|Build")
+	void SetSelectedBuildIndex(int32 Index);
 };

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseBuild.h"
+#include "EggTowerPlanRuntime/AI/Pawn/BaseBuild.h"
 #include "CoreUnit.generated.h"
 
 UCLASS()

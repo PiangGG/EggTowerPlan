@@ -7,20 +7,18 @@
 #include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "EggTowerPlanRuntime/Tool/StructLib.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
-#include "BaseEnemyAIController.generated.h"
+#include "BaseDefenseAIController.generated.h"
 
 /**
  * 
  */
-class ABaseEnemy;
-class UEnemyPathFollowingComponent;
-struct FChangeAIMessage;
+class ABaseBuild;
 UCLASS()
-class EGGTOWERPLANRUNTIME_API ABaseEnemyAIController : public AModularAIController
+class EGGTOWERPLANRUNTIME_API ABaseDefenseAIController : public AModularAIController
 {
 	GENERATED_BODY()
 public:
-	ABaseEnemyAIController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	ABaseDefenseAIController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void OnPossess(APawn* InPawn) override;
 
@@ -43,20 +41,16 @@ public:
 	class UBehaviorTree* BehaviorTree;
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeAIState(EEnemyState InAIState);
+	void ChangeAIState(EDefenseState InAIState);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void K2_ChangeAIState(EEnemyState InAIState);
+	void K2_ChangeAIState(EDefenseState InAIState);
+
 protected:
 	UPROPERTY()
-	TObjectPtr<UEnemyPathFollowingComponent> EnemyPathFollowingComponent;
-	UPROPERTY()
-	ABaseEnemy* BaseEnemy;
+	ABaseBuild* BaseBuild;
 public:
 	FGameplayMessageListenerHandle ListenerHandle;
 	
-	void OnChangeAIStateMessage(FGameplayTag Channel, const FChangeEnemyAIMessage& Message);
-	
+	void OnChangeAIStateMessage(FGameplayTag Channel, const FChangeDefenseAIMessage& Message);
 };
-
-

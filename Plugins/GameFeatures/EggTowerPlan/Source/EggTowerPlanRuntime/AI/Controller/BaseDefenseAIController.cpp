@@ -1,38 +1,36 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BaseEnemyAIController.h"
+#include "BaseDefenseAIController.h"
 #include "NativeGameplayTags.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
+#include "EggTowerPlanRuntime/AI/Pawn/BaseBuild.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
-#include "EggTowerPlanRuntime/AI/Component/EnemyPathFollowingComponent.h"
-#include "EggTowerPlanRuntime/AI/Pawn/BaseEnemy.h"
 #include "EggTowerPlanRuntime/Tool/StructLib.h"
 
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Enemy_ChangeAIState, "Ai.Enemy.ChangeAIState");
+UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Defense_ChangeAIState, "Ai.Defense.ChangeAIState");
 
-ABaseEnemyAIController::ABaseEnemyAIController(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer.SetDefaultSubobjectClass<UEnemyPathFollowingComponent>(TEXT("PathFollowingComponent")))
+ABaseDefenseAIController::ABaseDefenseAIController(const FObjectInitializer& ObjectInitializer)
 {
 	
 }
 
-void ABaseEnemyAIController::OnPossess(APawn* InPawn)
+void ABaseDefenseAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 	if (IsValid(InPawn))
 	{
-		BaseEnemy = Cast<ABaseEnemy>(InPawn);
+		BaseBuild = Cast<ABaseBuild>(InPawn);
 	}
 
 	RunBehaviorTree(BehaviorTree);
 	
 	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
-	ListenerHandle = MessageSubsystem.RegisterListener(TAG_Enemy_ChangeAIState, this, &ThisClass::OnChangeAIStateMessage);
+	ListenerHandle = MessageSubsystem.RegisterListener(TAG_Defense_ChangeAIState, this, &ThisClass::OnChangeAIStateMessage);
 }
 
-void ABaseEnemyAIController::OnUnPossess()
+void ABaseDefenseAIController::OnUnPossess()
 {
 	Super::OnUnPossess();
 	
@@ -40,17 +38,17 @@ void ABaseEnemyAIController::OnUnPossess()
 	MessageSubsystem.UnregisterListener(ListenerHandle);
 }
 
-void ABaseEnemyAIController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void ABaseDefenseAIController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 }
 
-void ABaseEnemyAIController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void ABaseDefenseAIController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
-void ABaseEnemyAIController::OnChangeAIStateMessage(FGameplayTag Channel, const FChangeEnemyAIMessage& Message)
+void ABaseDefenseAIController::OnChangeAIStateMessage(FGameplayTag Channel, const FChangeDefenseAIMessage& Message)
 {
 	if(Message.Controller == this)
 	{
@@ -58,7 +56,7 @@ void ABaseEnemyAIController::OnChangeAIStateMessage(FGameplayTag Channel, const 
 	}
 }
 
-void ABaseEnemyAIController::ReStartBehaviorTree()
+void ABaseDefenseAIController::ReStartBehaviorTree()
 {
 	UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
 	if (BTComp)
@@ -67,7 +65,7 @@ void ABaseEnemyAIController::ReStartBehaviorTree()
 	}
 }
 
-void ABaseEnemyAIController::StopBehaviorTree()
+void ABaseDefenseAIController::StopBehaviorTree()
 {
 	UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
 	if (BTComp )
@@ -76,7 +74,7 @@ void ABaseEnemyAIController::StopBehaviorTree()
 	}
 }
 
-void ABaseEnemyAIController::StartBehaviorTree()
+void ABaseDefenseAIController::StartBehaviorTree()
 {
 	UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
 	if (BTComp )
@@ -85,12 +83,12 @@ void ABaseEnemyAIController::StartBehaviorTree()
 	}
 }
 
-void ABaseEnemyAIController::ChangeAIState(EEnemyState InAIState)
+void ABaseDefenseAIController::ChangeAIState(EDefenseState InAIState)
 {
-	if(!IsValid(BaseEnemy))
+	if(!IsValid(BaseBuild))
 		return;
 	
-	BaseEnemy->SetCurrentAiState(InAIState);
+	BaseBuild->SetCurrentAiState(InAIState);
 	
 	switch (InAIState)
 	{

@@ -18,7 +18,7 @@ public:
 	EControllerState PCState;
 };
 USTRUCT(BlueprintType)
-struct FChangeAIMessage
+struct FChangeEnemyAIMessage
 {
 	GENERATED_BODY()
 
@@ -29,6 +29,20 @@ struct FChangeAIMessage
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyState AIState = EEnemyState::EIdle;
+};
+
+USTRUCT(BlueprintType)
+struct FChangeDefenseAIMessage
+{
+	GENERATED_BODY()
+
+	//接收的controller
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AController* Controller = nullptr;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EDefenseState AIState = EDefenseState::EIdle;
 };
 
 USTRUCT(BlueprintType)

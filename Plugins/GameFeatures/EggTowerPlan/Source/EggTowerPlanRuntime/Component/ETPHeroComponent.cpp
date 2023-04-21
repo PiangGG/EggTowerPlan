@@ -361,6 +361,16 @@ FRotator UETPHeroComponent::GetLastFrameRotation()
 	return LastFrameRotation;
 }
 
+int32 UETPHeroComponent::GetSelectedBuildIndex()
+{
+	return SelectedBuildIndex;
+}
+
+void UETPHeroComponent::SetSelectedBuildIndex(int32 Index)
+{
+	SelectedBuildIndex = Index;
+}
+
 void UETPHeroComponent::SetLastFrameRotation(FRotator Rotator)
 {
 	LastFrameRotation = Rotator;

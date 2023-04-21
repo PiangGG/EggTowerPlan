@@ -34,6 +34,16 @@ enum class EEnemyState :uint8
 	EAttack,
 	ENULL
 };
+//防御塔状态枚举
+UENUM(BlueprintType)
+enum class EDefenseState :uint8
+{
+	EIdle,
+	EBeHit,
+	EUsingAbility,
+	EAttack,
+	ENULL
+};
 
 UENUM(BlueprintType)
 enum class ECoreUnitChange :uint8

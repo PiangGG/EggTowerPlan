@@ -73,6 +73,11 @@ void ABaseBuild::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	
 }
 
+void ABaseBuild::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
 void ABaseBuild::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -215,5 +220,33 @@ void ABaseBuild::SetSelfInteractioning_Implementation(bool bInteractioning)
 			}
 		}
 	}
+}
+
+void ABaseBuild::SetCurrentAiState(EDefenseState AIState)
+{
+	if(CurrentAIState == AIState)
+	{
+		return;
+	}
+	
+	CurrentAIState = AIState;
+		
+	switch (CurrentAIState)
+	{
+	case EEnemyState::EIdle: break;
+	case EEnemyState::EMoveToTarget: break;
+	case EEnemyState::EBeHit: break;
+	case EEnemyState::EUsingAbility: break;
+	case EEnemyState::EAttack: break;
+	case EEnemyState::ENULL: break;
+	default: ;
+	}
+	
+	K2_OnSetCurrentAiState(AIState);
+}
+
+void ABaseBuild::OnRep_CurrentAIState(EDefenseState AIState)
+{
+	
 }
 
