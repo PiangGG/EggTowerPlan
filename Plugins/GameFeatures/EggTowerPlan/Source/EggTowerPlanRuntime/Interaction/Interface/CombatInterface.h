@@ -22,7 +22,12 @@ class EGGTOWERPLANRUNTIME_API ICombatInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category=CombatInterface)
+	UAnimMontage* GetAnimMontage();
 
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category=CombatInterface)
+	float GetMaxAttackLength();
+	
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category=CombatInterface)
 	void AttackStart(FName Selection,FName AttackSocket = "");
 

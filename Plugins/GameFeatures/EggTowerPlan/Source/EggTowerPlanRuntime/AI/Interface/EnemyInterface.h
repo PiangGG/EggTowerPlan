@@ -22,9 +22,5 @@ class EGGTOWERPLANRUNTIME_API IEnemyInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category=EnemyInterface)
-	UAnimMontage* GetAnimMontage();
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category=EnemyInterface)
-	float GetMaxAttackLength();
+	
 };

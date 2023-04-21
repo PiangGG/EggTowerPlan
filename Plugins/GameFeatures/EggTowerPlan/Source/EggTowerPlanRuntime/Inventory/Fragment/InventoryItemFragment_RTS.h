@@ -14,6 +14,18 @@ class EGGTOWERPLANRUNTIME_API UInventoryItemFragment_RTS : public ULyraInventory
 {
 	GENERATED_BODY()
 public:
+	//建造消耗
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
 	int32 Consume = 1;
+
+	//攻击距离
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	float AttackLength = 1000.0f;
+
+	//建筑物动画实例
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	TSubclassOf<UAnimInstance> AnimInstance;
+	//攻击蒙太奇
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	UAnimMontage* AttackMontage;
 };

@@ -78,6 +78,11 @@ void ABaseBuild::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
+UAbilitySystemComponent* ABaseBuild::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 void ABaseBuild::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -243,6 +248,41 @@ void ABaseBuild::SetCurrentAiState(EDefenseState AIState)
 	}
 	
 	K2_OnSetCurrentAiState(AIState);
+}
+
+void ABaseBuild::SetGenericTeamId(const FGenericTeamId& NewTeamID)
+{
+	if (GetController() == nullptr)
+	{
+		if (HasAuthority())
+		{
+			const FGenericTeamId OldTeamID = TeamId;
+			TeamId = NewTeamID;
+
+			//改变队伍的 代理调用 
+			const int32 OldTeamIndex = GenericTeamIdToInteger(OldTeamID); 
+			const int32 NewTeamIndex = GenericTeamIdToInteger(NewTeamID);
+			GetOnTeamIndexChangedDelegate()->Broadcast(this,OldTeamIndex,NewTeamIndex);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("You can't set the team ID on a zombie (%s) except on the authority"), *GetPathNameSafe(this));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("You can't set the team ID on a possessed zombie (%s); it's driven by the associated controller"), *GetPathNameSafe(this));
+	}
+}
+
+FGenericTeamId ABaseBuild::GetGenericTeamId() const
+{
+	return TeamId;
+}
+
+FOnLyraTeamIndexChangedDelegate* ABaseBuild::GetOnTeamIndexChangedDelegate()
+{
+	return &OnTeamChangedDelegate;
 }
 
 void ABaseBuild::OnRep_CurrentAIState(EDefenseState AIState)

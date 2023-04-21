@@ -3,9 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
+#include "GameplayCueInterface.h"
+#include "ModularPawn.h"
+#include "EggTowerPlanRuntime/Interaction/Interface/CombatInterface.h"
 #include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "GameFramework/Actor.h"
 #include "Interaction/IInteractableTarget.h"
+#include "Teams/LyraTeamAgentInterface.h"
 #include "BaseBuild.generated.h"
 
 class ULyraHealthSet;
@@ -15,7 +20,7 @@ class ULyraHealthComponent;
 class USphereComponent;
 class UWidgetComponent;
 UCLASS()
-class EGGTOWERPLANRUNTIME_API ABaseBuild : public APawn, public IInteractableTarget
+class EGGTOWERPLANRUNTIME_API ABaseBuild : public AModularPawn, public IInteractableTarget,public ICombatInterface,public IAbilitySystemInterface,public ILyraTeamAgentInterface, public IGameplayCueInterface
 {
 	GENERATED_BODY()
 	
@@ -30,6 +35,8 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -72,14 +79,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ETP|CoreUnit", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ULyraHealthComponent> HealthComponent;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
 	USphereComponent* CollsionComp;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
 	UWidgetComponent *HPBar;
 
 	//IInteractableTarget
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
 	UMaterialInterface* Overlaymaterial;
 	
 	UMaterialInterface* GetInteractioningMaterial_Implementation();
@@ -96,7 +103,17 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentAIState)
 	EDefenseState CurrentAIState;
 
-public:	
+public:
+	//~ILyraTeamAgentInterface interface
+	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	virtual FOnLyraTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override;
+	//~End of ILyraTeamAgentInterface interface
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Defense")
+	FGenericTeamId TeamId = 0;
+	UPROPERTY()
+	FOnLyraTeamIndexChangedDelegate OnTeamChangedDelegate;
+	
 	UFUNCTION()
 	void OnRep_CurrentAIState(EDefenseState AIState);
 
