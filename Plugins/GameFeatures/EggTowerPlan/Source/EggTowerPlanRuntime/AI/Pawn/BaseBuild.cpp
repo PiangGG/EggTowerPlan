@@ -11,6 +11,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "EggTowerPlanRuntime/Ability/Ability_ModeChange.h"
+#include "EggTowerPlanRuntime/Inventory/Fragment/InventoryItemFragment_RTS.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "GameModes/LyraExperienceManagerComponent.h"
 #include "Player/LyraPlayerState.h"
@@ -46,6 +47,10 @@ ABaseBuild::ABaseBuild(const FObjectInitializer& ObjectInitializer)
 
 	HPBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
 	HPBar->SetupAttachment(CollsionComp);
+
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
+	NiagaraComponent->SetupAttachment(Mesh,"AttackSocket");
+	NiagaraComponent->bAutoActivate = false;
 }
 
 void ABaseBuild::BeginPlay()
@@ -285,8 +290,80 @@ FOnLyraTeamIndexChangedDelegate* ABaseBuild::GetOnTeamIndexChangedDelegate()
 	return &OnTeamChangedDelegate;
 }
 
+void ABaseBuild::AttackStart_Implementation(FName Selection, FName AttackSocket)
+{
+	FTimerDelegate UpdateAttackDelegate = FTimerDelegate::CreateUObject(this, &ABaseBuild::UpdateAttack);
+
+	if (IsValid(ItemDefinition))
+	{
+		const ULyraInventoryItemFragment* Fragment = ULyraInventoryFunctionLibrary::FindItemDefinitionFragment(ItemDefinition,UInventoryItemFragment_RTS::StaticClass());
+		if (Fragment&&Cast<UInventoryItemFragment_RTS>(Fragment))
+		{
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_Attacking,UpdateAttackDelegate,Cast<UInventoryItemFragment_RTS>(Fragment)->AttackRate,true);
+
+			if (GetTargetActor())
+			{
+				GetTargetActor()->OnDestroyed.AddDynamic(this,&ThisClass::ABaseBuild::OnTargetOnDestroyed);
+			}
+			return;
+		}
+	}
+	
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_Attacking,UpdateAttackDelegate,1.0f,true);
+
+	if (GetTargetActor())
+	{
+		GetTargetActor()->OnDestroyed.AddDynamic(this,&ThisClass::ABaseBuild::OnTargetOnDestroyed);
+	}
+}
+
+void ABaseBuild::Attack_Implementation(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	
+}
+
+void ABaseBuild::AttackEnd_Implementation(FName Selection)
+{
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Attacking);
+	if(NiagaraComponent)
+	{
+		NiagaraComponent->Deactivate();
+	}
+	SetCurrentAiState(EDefenseState::EIdle);
+}
+
+void ABaseBuild::UpdateAttack_Implementation()
+{
+	if (GetTargetActor())
+	{
+		if (NiagaraComponent)
+		{
+			NiagaraComponent->Activate();
+		}
+		ULyraAbilitySystemComponent* ASC = Cast<ULyraAbilitySystemComponent>(GetTargetActor()->GetComponentByClass(ULyraAbilitySystemComponent::StaticClass()));
+		if(ASC)
+		{
+			ASC->BP_ApplyGameplayEffectToTarget(GameplayEffect,ASC,1,FGameplayEffectContextHandle());
+		}
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Attacking);
+		if(NiagaraComponent)
+		{
+			NiagaraComponent->Deactivate();
+		}
+	}
+}
+
 void ABaseBuild::OnRep_CurrentAIState(EDefenseState AIState)
 {
 	
+}
+
+void ABaseBuild::OnTargetOnDestroyed(AActor* DestroyedActor)
+{
+	AttackEnd_Implementation("");
 }
 

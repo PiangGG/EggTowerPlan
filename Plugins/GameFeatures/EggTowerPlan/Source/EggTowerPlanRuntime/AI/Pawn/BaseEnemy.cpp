@@ -3,12 +3,15 @@
 
 #include "BaseEnemy.h"
 
+#include "LyraGameplayTags.h"
 #include "AbilitySystem/LyraAbilitySystemComponent.h"
 #include "AbilitySystem/Attributes/LyraCombatSet.h"
 #include "AbilitySystem/Attributes/LyraHealthSet.h"
 #include "Character/LyraCharacterMovementComponent.h"
+#include "Character/LyraHealthComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
+#include "Components/WidgetComponent.h"
 #include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "GameModes/LyraExperienceManagerComponent.h"
 #include "Player/LyraPlayerState.h"
@@ -22,6 +25,10 @@ ABaseEnemy::ABaseEnemy(const FObjectInitializer& ObjectInitializer)
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
+	HealthComponent = CreateDefaultSubobject<ULyraHealthComponent>(TEXT("HealthComponent"));
+	HealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
+	HealthComponent->OnDeathFinished.AddDynamic(this, &ThisClass::OnDeathFinished);
+	
 	AttackBoxCollsion = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("UBoxComponent"));
 	AttackBoxCollsion->SetIsReplicated(true);
 	AttackBoxCollsion->SetupAttachment(GetMesh(),DefaultAttackSocket);
@@ -34,6 +41,9 @@ ABaseEnemy::ABaseEnemy(const FObjectInitializer& ObjectInitializer)
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	GetCharacterMovement()->bUseRVOAvoidance = true;
+
+	HPBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
+	HPBar->SetupAttachment(AttackBoxCollsion);
 }
 
 void ABaseEnemy::PostInitializeComponents()
@@ -115,12 +125,11 @@ void ABaseEnemy::BeginPlay()
 		check(ExperienceComponent);
 		ExperienceComponent->CallOrRegister_OnExperienceLoaded(FOnLyraExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
 	}
-	
-	//僵尸不会触发任何 重叠事件， 移动组件禁用物理量更新
-	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
-	GetCapsuleComponent()->SetShouldUpdatePhysicsVolume(false);
-	GetCharacterMovement()->bComponentShouldUpdatePhysicsVolume = false;
-	//GetCharacterMovement()->bAlwaysCheckFloor = false;
+
+	if (HealthComponent&&AbilitySystemComponent)
+	{
+		HealthComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
+	}
 }
 
 void ABaseEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -149,6 +158,67 @@ void ABaseEnemy::SetCurrentAiState(EEnemyState AIState)
 	}
 	
 	K2_OnSetCurrentAiState(AIState);
+}
+
+void ABaseEnemy::OnDeathFinished(AActor* OwningActor)
+{
+	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::DestroyDueToDeath);
+}
+
+void ABaseEnemy::DisableMovementAndCollision()
+{
+}
+
+void ABaseEnemy::DestroyDueToDeath()
+{
+	K2_OnDeathFinished();
+
+	UninitAndDestroy();
+}
+
+void ABaseEnemy::UninitAndDestroy()
+{
+}
+
+void ABaseEnemy::OnDeathStarted(AActor* OwningActor)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		//DetachFromControllerPendingDestroy();
+		SetLifeSpan(0.1f);
+	}
+	if (AbilitySystemComponent)
+	{
+		if (AbilitySystemComponent->GetAvatarActor() == this)
+		{
+			if (!AbilitySystemComponent)
+			{
+				return;
+			}
+			if (AbilitySystemComponent->GetAvatarActor() == GetOwner())
+			{
+				FGameplayTagContainer AbilityTypesToIgnore;
+				AbilityTypesToIgnore.AddTag(FLyraGameplayTags::Get().Ability_Behavior_SurvivesDeath);
+
+				AbilitySystemComponent->CancelAbilities(nullptr, &AbilityTypesToIgnore);
+				AbilitySystemComponent->ClearAbilityInput();
+				AbilitySystemComponent->RemoveAllGameplayCues();
+
+				if (AbilitySystemComponent->GetOwnerActor() != nullptr)
+				{
+					AbilitySystemComponent->SetAvatarActor(nullptr);
+				}
+				else
+				{
+					AbilitySystemComponent->ClearActorInfo();
+				}
+			}
+
+			AbilitySystemComponent = nullptr;
+		}
+	}
+
+	SetActorHiddenInGame(true);
 }
 
 void ABaseEnemy::OnRep_CurrentAIState(EEnemyState AIState)

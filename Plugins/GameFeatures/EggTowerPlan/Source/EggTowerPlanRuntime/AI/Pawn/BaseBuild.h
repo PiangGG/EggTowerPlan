@@ -6,10 +6,12 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayCueInterface.h"
 #include "ModularPawn.h"
+#include "NiagaraComponent.h"
 #include "EggTowerPlanRuntime/Interaction/Interface/CombatInterface.h"
 #include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "GameFramework/Actor.h"
 #include "Interaction/IInteractableTarget.h"
+#include "Inventory/LyraInventoryItemDefinition.h"
 #include "Teams/LyraTeamAgentInterface.h"
 #include "BaseBuild.generated.h"
 
@@ -70,13 +72,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=AbilitySet)
 	ULyraCombatSet* CombatSet;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ETP|Build")
 	USkeletalMeshComponent *Mesh;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ETP|Build")
+	UNiagaraComponent* NiagaraComponent;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Build")
 	ULyraAbilitySystemComponent* AbilitySystemComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ETP|CoreUnit", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ETP|Build", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ULyraHealthComponent> HealthComponent;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
@@ -98,7 +103,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category= "Defense")
 	void K2_OnSetCurrentAiState(EDefenseState AIState);
-
+public:
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
+	TSubclassOf<ULyraInventoryItemDefinition> ItemDefinition;
+	
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentAIState)
 	EDefenseState CurrentAIState;
@@ -109,10 +117,26 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	virtual FOnLyraTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override;
 	//~End of ILyraTeamAgentInterface interface
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Defense")
 	FGenericTeamId TeamId = 0;
 	UPROPERTY()
 	FOnLyraTeamIndexChangedDelegate OnTeamChangedDelegate;
+
+	/*CombatInterface*/
+	void AttackStart_Implementation(FName Selection,FName AttackSocket = "");
+	UFUNCTION(BlueprintNativeEvent)
+	void Attack(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
+	void AttackEnd_Implementation(FName Selection);
+	
+	FTimerHandle TimerHandle_Attacking;
+	UFUNCTION(BlueprintNativeEvent)
+	void UpdateAttack();
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=IEnemyInterface)
+	// bool bDrawDebugAttack = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=Attack)
+	TSubclassOf<UGameplayEffect> GameplayEffect;
 	
 	UFUNCTION()
 	void OnRep_CurrentAIState(EDefenseState AIState);
@@ -125,4 +149,7 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Defense)
 	class AActor* TargetActor;
+
+	UFUNCTION()
+	void OnTargetOnDestroyed(AActor* DestroyedActor );
 };

@@ -21,6 +21,9 @@ class ULyraAbilitySystemComponent;
 class ULyraExperienceDefinition;
 class ULyraHealthSet;
 class ULyraCombatSet;
+class UWidgetComponent;
+class ULyraHealthComponent;
+
 UCLASS(Blueprintable, BlueprintType)
 class EGGTOWERPLANRUNTIME_API ABaseEnemy : public AModularCharacter, public IEnemyInterface ,public ICombatInterface,public IAbilitySystemInterface,public ILyraTeamAgentInterface, public IGameplayCueInterface
 {
@@ -30,10 +33,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "ETP|Enemy")
 	ULyraAbilitySystemComponent* AbilitySystemComponent;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ETP|Enemy", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<ULyraHealthComponent> HealthComponent;
 	UPROPERTY(VisibleAnywhere, Category = "ETP|Enemy")
 	UBoxComponent* AttackBoxCollsion;
-	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Enemy")
+	UWidgetComponent *HPBar;
 	virtual void PostInitializeComponents() override;
 	void OnExperienceLoaded(const ULyraExperienceDefinition*);
 
@@ -71,6 +76,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Enemy")
 	FORCEINLINE FVector GetTargetLastMoveLocation() const{ return  TargetLastLocation;}
 
+	UFUNCTION()
+	virtual void OnDeathFinished(AActor* OwningActor);
+
+	// Called when the death sequence for the character has completed
+	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnDeathFinished"))
+	void K2_OnDeathFinished();
+	
+	void DisableMovementAndCollision();
+	void DestroyDueToDeath();
+	void UninitAndDestroy();
+	UFUNCTION()
+	virtual void OnDeathStarted(AActor* OwningActor);
+	
 public:
 	virtual void Tick(float DeltaTime) override;
 
@@ -124,6 +142,7 @@ public:
 	void AttackEnd_Implementation(FName Selection);
 	
 	FTimerHandle TimerHandle_Attacking;
+	UFUNCTION()
 	void UpdateAttack(FName AttackSocket);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=IEnemyInterface)
 	bool bDrawDebugAttack = false;

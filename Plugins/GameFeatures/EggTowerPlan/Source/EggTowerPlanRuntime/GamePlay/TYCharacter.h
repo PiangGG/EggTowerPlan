@@ -11,6 +11,9 @@
 /**
  * 
  */
+class UInputMappingContext;
+class UInputAction;
+struct FInputActionValue;
 UCLASS()
 class EGGTOWERPLANRUNTIME_API ATYCharacter : public AModularCharacter
 {

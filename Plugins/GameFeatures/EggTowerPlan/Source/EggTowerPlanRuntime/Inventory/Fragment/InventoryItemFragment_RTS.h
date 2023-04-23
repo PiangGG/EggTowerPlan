@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraEmitter.h"
 #include "Inventory/LyraInventoryItemDefinition.h"
 #include "InventoryItemFragment_RTS.generated.h"
 
 /**
  * 
  */
+class UGameplayEffect;
 UCLASS()
 class EGGTOWERPLANRUNTIME_API UInventoryItemFragment_RTS : public ULyraInventoryItemFragment
 {
@@ -28,4 +30,12 @@ public:
 	//攻击蒙太奇
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
 	UAnimMontage* AttackMontage;
+	//攻击特效
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	UNiagaraSystem* NiagaraSystem;
+	//攻击GE
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=RTS)
+	TSubclassOf<UGameplayEffect> GameplayEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	float AttackRate = 1.0f;
 };

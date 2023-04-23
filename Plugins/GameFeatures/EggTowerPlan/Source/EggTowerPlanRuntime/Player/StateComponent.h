@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ControllerComponent.h"
+#include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "StateComponent.generated.h"
 
 /**
  * 
  */
 class AETPCharacter;
+class ABaseCharacter;
 UCLASS()
 class EGGTOWERPLANRUNTIME_API UStateComponent : public UControllerComponent
 {
