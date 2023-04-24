@@ -11,9 +11,11 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "EggTowerPlanRuntime/Ability/Ability_ModeChange.h"
+#include "EggTowerPlanRuntime/Component/AIManageComponent.h"
 #include "EggTowerPlanRuntime/Inventory/Fragment/InventoryItemFragment_RTS.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "GameModes/LyraExperienceManagerComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/LyraPlayerState.h"
 
 ABaseBuild::ABaseBuild(const FObjectInitializer& ObjectInitializer)
@@ -73,9 +75,16 @@ void ABaseBuild::BeginPlay()
 
 void ABaseBuild::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+	if(GameMode)
+	{
+		UAIManageComponent* AIManageComponent = GameMode->FindComponentByClass<UAIManageComponent>();
+		if(AIManageComponent)
+		{
+			AIManageComponent->UnRegisterBuild(this);
+		}
+	}
 	Super::EndPlay(EndPlayReason);
-
-	
 }
 
 void ABaseBuild::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -116,6 +125,16 @@ void ABaseBuild::GatherInteractionOptions(const FInteractionQuery& InteractQuery
 void ABaseBuild::OnExperienceLoaded(const ULyraExperienceDefinition* Definition)
 {
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, ALyraPlayerState::NAME_LyraAbilityReady);
+	
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+	if(GameMode)
+	{
+		UAIManageComponent* AIManageComponent = GameMode->FindComponentByClass<UAIManageComponent>();
+		if(AIManageComponent)
+		{
+			AIManageComponent->RegisterBuild(this);
+		}
+	}
 }
 
 void ABaseBuild::OnDeathFinished(AActor* OwningActor)

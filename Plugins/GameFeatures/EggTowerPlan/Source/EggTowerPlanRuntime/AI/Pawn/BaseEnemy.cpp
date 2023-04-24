@@ -12,8 +12,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
 #include "Components/WidgetComponent.h"
+#include "EggTowerPlanRuntime/Component/AIManageComponent.h"
 #include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "GameModes/LyraExperienceManagerComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/LyraPlayerState.h"
 
 ABaseEnemy::ABaseEnemy(const FObjectInitializer& ObjectInitializer)
@@ -60,6 +62,16 @@ void ABaseEnemy::PostInitializeComponents()
 void ABaseEnemy::OnExperienceLoaded(const ULyraExperienceDefinition*)
 {
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, ALyraPlayerState::NAME_LyraAbilityReady);
+
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+	if(GameMode)
+	{
+		UAIManageComponent* AIManageComponent = GameMode->FindComponentByClass<UAIManageComponent>();
+		if(AIManageComponent)
+		{
+			AIManageComponent->RegisterEnemy(this);
+		}
+	}
 }
 
 UAbilitySystemComponent* ABaseEnemy::GetAbilitySystemComponent() const
@@ -134,6 +146,15 @@ void ABaseEnemy::BeginPlay()
 
 void ABaseEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+	if(GameMode)
+	{
+		UAIManageComponent* AIManageComponent = GameMode->FindComponentByClass<UAIManageComponent>();
+		if(AIManageComponent)
+		{
+			AIManageComponent->UnRegisterEnemy(this);
+		}
+	}
 	Super::EndPlay(EndPlayReason);
 }
 
