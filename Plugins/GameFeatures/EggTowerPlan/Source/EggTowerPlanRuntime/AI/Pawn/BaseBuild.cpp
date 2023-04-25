@@ -31,24 +31,35 @@ ABaseBuild::ABaseBuild(const FObjectInitializer& ObjectInitializer)
 	HealthSet = CreateDefaultSubobject<ULyraHealthSet>(TEXT("HealthSet"));
 	CombatSet = CreateDefaultSubobject<ULyraCombatSet>(TEXT("CombatSet"));
 	
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-
 	HealthComponent = CreateDefaultSubobject<ULyraHealthComponent>(TEXT("HealthComponent"));
 	HealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
 	HealthComponent->OnDeathFinished.AddDynamic(this, &ThisClass::OnDeathFinished);
+	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
+	RootComponent = RootSceneComponent;
 
-	CollsionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollsionComp"));
-	CollsionComp->SetCollisionProfileName(FName("Interactable_BlockDynamic"));
-	CollsionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	CollsionComp->bFillCollisionUnderneathForNavmesh = false;
-	RootComponent = CollsionComp;
-	Mesh->SetupAttachment(CollsionComp);
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(RootSceneComponent);
 	Mesh->bCastDynamicShadow = false;
 	Mesh->bCastStaticShadow = false;
-	//CollsionComp->SetSphereRadius(128.0);
-
+	
+	CollsionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollsionComp"));
+	CollsionComp->SetCollisionProfileName(FName("ETP_Damage_Build"));
+	CollsionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollsionComp->bFillCollisionUnderneathForNavmesh = false;
+	CollsionComp->SetSphereRadius(DamageSphereRadius);
+	CollsionComp->SetupAttachment(RootSceneComponent);
+	
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	BoxComponent->SetCollisionProfileName(FName("ETP_BuildProfile"));
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BoxComponent->bFillCollisionUnderneathForNavmesh = true;
+	BoxComponent->SetBoxExtent(BoxSizeVector);
+	BoxComponent->SetupAttachment(CollsionComp);
+	BoxComponent->SetRelativeLocation(FVector(CollsionComp->GetRelativeLocation().X,CollsionComp->GetRelativeLocation().Y,CollsionComp->GetRelativeLocation().Z+BoxSizeVector.Z-1.0f));
+	BoxComponent->SetupAttachment(RootSceneComponent);
+	
 	HPBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
-	HPBar->SetupAttachment(CollsionComp);
+	HPBar->SetupAttachment(RootSceneComponent);
 
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	NiagaraComponent->SetupAttachment(Mesh,"AttackSocket");

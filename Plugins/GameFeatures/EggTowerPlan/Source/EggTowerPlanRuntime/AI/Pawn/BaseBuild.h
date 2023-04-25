@@ -7,6 +7,7 @@
 #include "GameplayCueInterface.h"
 #include "ModularPawn.h"
 #include "NiagaraComponent.h"
+#include "Components/BoxComponent.h"
 #include "EggTowerPlanRuntime/Interaction/Interface/CombatInterface.h"
 #include "EggTowerPlanRuntime/Tool/EnumLib.h"
 #include "GameFramework/Actor.h"
@@ -85,8 +86,14 @@ public:
 	TObjectPtr<ULyraHealthComponent> HealthComponent;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
+	USceneComponent* RootSceneComponent;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
 	USphereComponent* CollsionComp;
 
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
+	UBoxComponent* BoxComponent;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|Defense")
 	UWidgetComponent *HPBar;
 
@@ -152,4 +159,10 @@ public:
 
 	UFUNCTION()
 	void OnTargetOnDestroyed(AActor* DestroyedActor );
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Defense)
+	FVector BoxSizeVector = FVector(100.0F);
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Defense)
+	float DamageSphereRadius = 128.0f;
 };

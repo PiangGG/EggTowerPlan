@@ -36,6 +36,13 @@ public:
 	//攻击GE
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category=RTS)
 	TSubclassOf<UGameplayEffect> GameplayEffect;
+	//攻击频率
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
 	float AttackRate = 1.0f;
+	//建筑物平面范围
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	FVector BoxSizeVector = FVector(100.0f);
+	//被伤害范围
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	float DamageSphereRadius = 128.0f;
 };
