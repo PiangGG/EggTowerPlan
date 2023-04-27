@@ -27,6 +27,7 @@ enum class EControllerState :uint8
 UENUM(BlueprintType)
 enum class EEnemyState :uint8
 {
+	
 	EIdle,
 	EMoveToTarget,
 	EBeHit,
@@ -38,6 +39,7 @@ enum class EEnemyState :uint8
 UENUM(BlueprintType)
 enum class EDefenseState :uint8
 {
+	Building,
 	EIdle,
 	EBeHit,
 	EUsingAbility,

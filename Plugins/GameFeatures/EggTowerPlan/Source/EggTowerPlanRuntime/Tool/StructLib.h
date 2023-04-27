@@ -57,6 +57,18 @@ struct FChangeCoreUnitMessage
 	class ACoreUnit* CoreUnit;
 };
 
+USTRUCT(BlueprintType)
+struct FBuildUnit
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* MeshComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 OverlapSize = 0;
+};
+
 class EGGTOWERPLANRUNTIME_API StructLib
 {
 public:

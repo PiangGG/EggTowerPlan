@@ -13,6 +13,7 @@
 #include "EggTowerPlanRuntime/Ability/Ability_ModeChange.h"
 #include "EggTowerPlanRuntime/Component/AIManageComponent.h"
 #include "EggTowerPlanRuntime/Inventory/Fragment/InventoryItemFragment_RTS.h"
+#include "EggTowerPlanRuntime/World/Actor/BuildActor/BuildTipPlane.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "GameModes/LyraExperienceManagerComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -44,19 +45,20 @@ ABaseBuild::ABaseBuild(const FObjectInitializer& ObjectInitializer)
 	
 	CollsionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollsionComp"));
 	CollsionComp->SetCollisionProfileName(FName("ETP_Damage_Build"));
-	CollsionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollsionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CollsionComp->bFillCollisionUnderneathForNavmesh = false;
 	CollsionComp->SetSphereRadius(DamageSphereRadius);
 	CollsionComp->SetupAttachment(RootSceneComponent);
 	
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->SetCollisionProfileName(FName("ETP_BuildProfile"));
-	BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BoxComponent->bFillCollisionUnderneathForNavmesh = true;
 	BoxComponent->SetBoxExtent(BoxSizeVector);
 	BoxComponent->SetupAttachment(CollsionComp);
 	BoxComponent->SetRelativeLocation(FVector(CollsionComp->GetRelativeLocation().X,CollsionComp->GetRelativeLocation().Y,CollsionComp->GetRelativeLocation().Z+BoxSizeVector.Z-1.0f));
 	BoxComponent->SetupAttachment(RootSceneComponent);
+	
 	
 	HPBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
 	HPBar->SetupAttachment(RootSceneComponent);
@@ -64,6 +66,8 @@ ABaseBuild::ABaseBuild(const FObjectInitializer& ObjectInitializer)
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	NiagaraComponent->SetupAttachment(Mesh,"AttackSocket");
 	NiagaraComponent->bAutoActivate = false;
+
+	CurrentAIState = EDefenseState::Building;
 }
 
 void ABaseBuild::BeginPlay()
@@ -77,7 +81,11 @@ void ABaseBuild::BeginPlay()
 		check(ExperienceComponent);
 		ExperienceComponent->CallOrRegister_OnExperienceLoaded(FOnLyraExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
 	}
-
+	if (BoxComponent)
+	{
+		BoxComponent->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::UnitBeginOverlap);
+		BoxComponent->OnComponentEndOverlap.AddDynamic(this,&ThisClass::UnitEndOverlap);
+	}
 	if (HealthComponent&&AbilitySystemComponent)
 	{
 		HealthComponent->InitializeWithAbilitySystem(AbilitySystemComponent);
@@ -209,6 +217,24 @@ void ABaseBuild::OnDeathStarted(AActor* OwningActor)
 	SetActorHiddenInGame(true);
 }
 
+void ABaseBuild::UnitBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (Cast<ABuildTipPlane>(OtherActor))
+	{
+		Cast<ABuildTipPlane>(OtherActor)->UnitBeginOverlap(OtherComp);
+	}
+}
+
+void ABaseBuild::UnitEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (Cast<ABuildTipPlane>(OtherActor))
+	{
+		Cast<ABuildTipPlane>(OtherActor)->UnitEndOverlap(OtherComp);
+	}
+}
+
 UMaterialInterface* ABaseBuild::GetInteractioningMaterial_Implementation()
 {
 	return Overlaymaterial;
@@ -273,15 +299,24 @@ void ABaseBuild::SetCurrentAiState(EDefenseState AIState)
 		
 	switch (CurrentAIState)
 	{
-	case EEnemyState::EIdle: break;
-	case EEnemyState::EMoveToTarget: break;
-	case EEnemyState::EBeHit: break;
-	case EEnemyState::EUsingAbility: break;
-	case EEnemyState::EAttack: break;
-	case EEnemyState::ENULL: break;
-	default: ;
+		case EDefenseState::Building: break;
+		case EDefenseState::EIdle:
+			if (BoxComponent)
+			{
+				BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			}
+			if (CollsionComp)
+			{
+				CollsionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			}
+			break;
+		
+		case EDefenseState::EBeHit: break;
+		case EDefenseState::EUsingAbility: break;
+		case EDefenseState::EAttack: break;
+		case EDefenseState::ENULL: break;
+		default: ;
 	}
-	
 	K2_OnSetCurrentAiState(AIState);
 }
 

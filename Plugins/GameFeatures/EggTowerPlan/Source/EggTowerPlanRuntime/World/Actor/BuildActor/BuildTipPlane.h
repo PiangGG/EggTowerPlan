@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BuildTipPlane.generated.h"
 
+struct FBuildUnit;
 UCLASS()
 class EGGTOWERPLANRUNTIME_API ABuildTipPlane : public AActor
 {
@@ -26,6 +27,9 @@ protected:
 	virtual void ShowUnit(int32 Size = 2);
 	UFUNCTION(BlueprintCallable)
 	virtual void HideUnit();
+public:
+	virtual void UnitBeginOverlap(UPrimitiveComponent* OtherComp);
+	virtual void UnitEndOverlap(UPrimitiveComponent* OtherComp);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -37,9 +41,26 @@ public:
 	USceneComponent* RootSceneComponent;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TArray<UStaticMeshComponent*>Meshs;
-
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TArray<FBuildUnit>MeshsOverlapMap;
+	
+	// UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	// UInstancedStaticMeshComponent* MeshComponent;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 length = 4;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	int32 Maxlength = 11;
+	int32 Maxlength = 5;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base|Material")
+	UMaterialInterface *Material_G;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base|Material")
+	UMaterialInterface *Material_R;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int32 OverlapNumber = 0;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool bCanBuild = true;
 };

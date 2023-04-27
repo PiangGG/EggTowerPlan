@@ -19,7 +19,8 @@ public:
 	//建造消耗
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
 	int32 Consume = 1;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
+	int32 UnitSize = 1;
 	//攻击距离
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=RTS)
 	float AttackLength = 1000.0f;

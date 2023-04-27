@@ -64,6 +64,11 @@ public:
 	void UninitAndDestroy();
 	UFUNCTION()
 	virtual void OnDeathStarted(AActor* OwningActor);
+
+	UFUNCTION()
+	virtual void UnitBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	UFUNCTION()
+	virtual void UnitEndOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
 	UPROPERTY(EditAnywhere)
 	FInteractionOption Option;
