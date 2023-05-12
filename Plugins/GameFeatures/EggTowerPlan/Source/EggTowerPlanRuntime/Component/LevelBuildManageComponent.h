@@ -21,6 +21,9 @@ public:
 	ULevelBuildManageComponent(const FObjectInitializer& ObjectInitializer);
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(Replicated,EditAnywhere,BlueprintReadWrite)
+	FLyraInventoryList AllBuildList;
 	
 	UPROPERTY(Replicated,EditAnywhere,BlueprintReadWrite)
 	FLyraInventoryList CanBuildList;
@@ -31,11 +34,19 @@ public:
 	UFUNCTION(BlueprintCallable,Category=LevelBuildManage)
 	void AddBuild(TSubclassOf<ULyraInventoryItemDefinition> Item);
 	UFUNCTION(BlueprintCallable,Category=LevelBuildManage)
+	void AddMenu(TSubclassOf<ULyraInventoryItemDefinition> Item);
+	UFUNCTION(BlueprintCallable,Category=LevelBuildManage)
 	void RemoveBuild(TSubclassOf<ULyraInventoryItemDefinition> Item);
 
 	UFUNCTION(BlueprintCallable, Category=LevelBuildManage, BlueprintPure=false)
 	TArray<ULyraInventoryItemInstance*> GetAllCanBuild() const;
 
+	UFUNCTION(BlueprintCallable, Category=LevelBuildManage, BlueprintPure=false)
+	TArray<ULyraInventoryItemInstance*> GetAllAllBuild() const;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TArray<TSubclassOf<ULyraInventoryItemDefinition>> BuildItemDefArray;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TArray<TSubclassOf<ULyraInventoryItemDefinition>> AllBuildItemDefArray;
 };

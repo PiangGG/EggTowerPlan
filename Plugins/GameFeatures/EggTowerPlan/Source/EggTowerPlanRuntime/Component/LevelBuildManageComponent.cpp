@@ -11,6 +11,7 @@
 ULevelBuildManageComponent::ULevelBuildManageComponent(const FObjectInitializer& ObjectInitializer)
 :Super(ObjectInitializer)
 , CanBuildList(this)
+, AllBuildList(this)
 {
 	
 }
@@ -35,6 +36,7 @@ void ULevelBuildManageComponent::GetLifetimeReplicatedProps(TArray< FLifetimePro
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, CanBuildList);
+	DOREPLIFETIME(ThisClass, AllBuildList);
 }
 
 void ULevelBuildManageComponent::InitBuildList()
@@ -42,6 +44,10 @@ void ULevelBuildManageComponent::InitBuildList()
 	for (TSubclassOf<ULyraInventoryItemDefinition>  BuildItem : BuildItemDefArray)
 	{
 		AddBuild(BuildItem);
+	}
+	for (TSubclassOf<ULyraInventoryItemDefinition>  BuildItem : AllBuildItemDefArray)
+	{
+		AddMenu(BuildItem);
 	}
 }
 
@@ -56,6 +62,20 @@ void ULevelBuildManageComponent::AddBuild(TSubclassOf<ULyraInventoryItemDefiniti
 	if (ItemDef != nullptr)
 	{
 		Result = CanBuildList.AddEntry(ItemDef, 1);
+		
+		if (IsUsingRegisteredSubObjectList() && IsReadyForReplication() && Result)
+		{
+			AddReplicatedSubObject(Result);
+		}
+	}
+}
+
+void ULevelBuildManageComponent::AddMenu(TSubclassOf<ULyraInventoryItemDefinition> Item)
+{
+	ULyraInventoryItemInstance* Result = nullptr;
+	if (Item != nullptr)
+	{
+		Result = AllBuildList.AddEntry(Item, 1);
 		
 		if (IsUsingRegisteredSubObjectList() && IsReadyForReplication() && Result)
 		{
@@ -88,4 +108,9 @@ void ULevelBuildManageComponent::RemoveBuild(TSubclassOf<ULyraInventoryItemDefin
 TArray<ULyraInventoryItemInstance*> ULevelBuildManageComponent::GetAllCanBuild() const
 {
 	return CanBuildList.GetAllItems();
+}
+
+TArray<ULyraInventoryItemInstance*> ULevelBuildManageComponent::GetAllAllBuild() const
+{
+	return AllBuildList.GetAllItems();
 }
