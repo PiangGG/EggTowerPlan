@@ -24,5 +24,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void IntoMapStartGame();
-	
+
+	UFUNCTION(BlueprintNativeEvent)
+	void EndGame();
 };

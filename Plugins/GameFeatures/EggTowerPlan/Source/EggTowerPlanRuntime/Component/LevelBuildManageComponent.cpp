@@ -10,8 +10,8 @@
 #include "UObject/Object.h"
 ULevelBuildManageComponent::ULevelBuildManageComponent(const FObjectInitializer& ObjectInitializer)
 :Super(ObjectInitializer)
-, CanBuildList(this)
 , AllBuildList(this)
+, CanBuildList(this)
 {
 	
 }

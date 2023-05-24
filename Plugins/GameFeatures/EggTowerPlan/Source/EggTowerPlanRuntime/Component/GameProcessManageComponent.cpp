@@ -30,6 +30,11 @@ void UGameProcessManageComponent::OnExperienceLoaded(const ULyraExperienceDefini
 	IntoMapStartGame();
 }
 
+void UGameProcessManageComponent::EndGame_Implementation()
+{
+	
+}
+
 void UGameProcessManageComponent::IntoMapStartGame_Implementation()
 {
 	UE_LOG(LogTemp,Warning,TEXT("Start"))

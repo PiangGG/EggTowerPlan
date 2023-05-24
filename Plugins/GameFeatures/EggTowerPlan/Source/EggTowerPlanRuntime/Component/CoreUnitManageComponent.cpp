@@ -2,9 +2,12 @@
 
 
 #include "CoreUnitManageComponent.h"
+
+#include "GameProcessManageComponent.h"
 #include "NativeGameplayTags.h"
 #include "EggTowerPlanRuntime/Tool/StructLib.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
+#include "GameModes/LyraGameState.h"
 
 //UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_CoreUnit_Change,"ETP.CoreUnit.ChangeCoreUnitNumber");
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_CoreUnit_Change);
@@ -47,5 +50,13 @@ void UCoreUnitManageComponent::OnChangeCoreUnitMessage(FGameplayTag Channel, con
 		case ECoreUnitChange::ENULL:
 			break;
 		default: ;
+	}
+
+	if (CoreUnit.Num()<=0)
+	{
+		if (UGameProcessManageComponent *GameProcessManageComponent = Cast<UGameProcessManageComponent>(GetGameState<ALyraGameState>()->GetComponentByClass(UGameProcessManageComponent::StaticClass())))
+		{
+			GameProcessManageComponent->EndGame();
+		}
 	}
 }
