@@ -4,14 +4,10 @@
 
 #include "Components/GameFrameworkInitStateInterface.h"
 #include "Components/PawnComponent.h"
-#include "Delegates/Delegate.h"
-#include "Engine/EngineTypes.h"
-#include "GameFramework/Actor.h"
-#include "Templates/Casts.h"
-#include "UObject/NameTypes.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "LyraPawnExtensionComponent.generated.h"
+
+namespace EEndPlayReason { enum Type : int; }
 
 class UGameFrameworkComponentManager;
 class ULyraAbilitySystemComponent;
@@ -54,7 +50,6 @@ public:
 	const T* GetPawnData() const { return Cast<T>(PawnData); }
 
 	/** Sets the current pawn data */
-	UFUNCTION(BlueprintCallable)
 	void SetPawnData(const ULyraPawnData* InPawnData);
 
 	/** Gets the current ability system component, which may be owned by a different actor */
@@ -101,9 +96,6 @@ protected:
 	UPROPERTY(EditInstanceOnly, ReplicatedUsing = OnRep_PawnData, Category = "Lyra|Pawn")
 	TObjectPtr<const ULyraPawnData> PawnData;
 
-	/** Pawn data used to create the pawn. Specified from a spawn function or on a placed instance. */
-	UPROPERTY(EditInstanceOnly, ReplicatedUsing = OnRep_PawnData, Category = "Lyra|Pawn")
-	TSubclassOf<ULyraPawnData> PawnDataClass;
 	/** Pointer to the ability system component that is cached for convenience. */
 	UPROPERTY()
 	TObjectPtr<ULyraAbilitySystemComponent> AbilitySystemComponent;

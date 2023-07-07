@@ -3,15 +3,9 @@
 #include "LyraEquipmentInstance.h"
 
 #include "Components/SkeletalMeshComponent.h"
-#include "Engine/EngineTypes.h"
-#include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/Pawn.h"
 #include "LyraEquipmentDefinition.h"
-#include "Math/Transform.h"
-#include "Misc/AssertionMacros.h"
 #include "Net/UnrealNetwork.h"
-#include "Templates/Casts.h"
 
 #if UE_WITH_IRIS
 #include "Iris/ReplicationSystem/ReplicationFragmentUtil.h"

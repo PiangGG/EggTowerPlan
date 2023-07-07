@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CommonInputBaseTypes.h"
+#include "CommonInputTypeEnum.h"
 #include "GameplayTagContainer.h"
 #include "UObject/SoftObjectPtr.h"
 
@@ -12,7 +12,7 @@ class UPlayerMappableInputConfig;
 
 /** A container to organize loaded player mappable configs to their CommonUI input type */
 USTRUCT(BlueprintType)
-struct LYRAGAME_API FLoadedMappableConfigPair
+struct FLoadedMappableConfigPair
 {
 	GENERATED_BODY()
 

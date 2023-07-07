@@ -2,14 +2,9 @@
 
 #include "LyraInputComponent.h"
 
-#include "Containers/Map.h"
 #include "EnhancedInputSubsystems.h"
-#include "Input/LyraMappableConfigPair.h"
-#include "InputCoreTypes.h"
 #include "Player/LyraLocalPlayer.h"
 #include "Settings/LyraSettingsLocal.h"
-#include "UObject/NameTypes.h"
-#include "UObject/UnrealNames.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraInputComponent)
 
@@ -35,7 +30,7 @@ void ULyraInputComponent::AddInputMappings(const ULyraInputConfig* InputConfig, 
 		{
 			if (Pair.Key != NAME_None && Pair.Value.IsValid())
 			{
-				InputSubsystem->AddPlayerMappedKey(Pair.Key, Pair.Value);
+				InputSubsystem->AddPlayerMappedKeyInSlot(Pair.Key, Pair.Value);
 			}
 		}
 	}
@@ -61,7 +56,7 @@ void ULyraInputComponent::RemoveInputMappings(const ULyraInputConfig* InputConfi
 		// Clear any player mapped keys from enhanced input
 		for (const TPair<FName, FKey>& Pair : LocalSettings->GetCustomPlayerInputConfig())
 		{
-			InputSubsystem->RemovePlayerMappedKey(Pair.Key);
+			InputSubsystem->RemovePlayerMappedKeyInSlot(Pair.Key);
 		}
 	}
 }

@@ -2,13 +2,12 @@
 
 #pragma once
 
-#include "HAL/Platform.h"
 #include "System/GameplayTagStack.h"
 #include "Templates/SubclassOf.h"
-#include "UObject/Object.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "LyraInventoryItemInstance.generated.h"
+
+class FLifetimeProperty;
 
 class ULyraInventoryItemDefinition;
 class ULyraInventoryItemFragment;
@@ -66,7 +65,7 @@ private:
 	/** Register all replication fragments */
 	virtual void RegisterReplicationFragments(UE::Net::FFragmentRegistrationContext& Context, UE::Net::EFragmentRegistrationFlags RegistrationFlags) override;
 #endif // UE_WITH_IRIS
-
+public:
 	void SetItemDef(TSubclassOf<ULyraInventoryItemDefinition> InDef);
 
 	friend struct FLyraInventoryList;

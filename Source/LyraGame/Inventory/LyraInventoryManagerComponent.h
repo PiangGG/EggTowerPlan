@@ -3,18 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Containers/Array.h"
-#include "Containers/ArrayView.h"
-#include "Containers/Map.h"
-#include "Containers/Set.h"
-#include "Containers/SparseArray.h"
-#include "Containers/UnrealString.h"
-#include "CoreTypes.h"
 #include "Net/Serialization/FastArraySerializer.h"
-#include "Templates/SubclassOf.h"
-#include "Templates/UnrealTemplate.h"
-#include "UObject/Class.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "LyraInventoryManagerComponent.generated.h"
 
@@ -58,10 +47,10 @@ struct LYRAGAME_API FLyraInventoryEntry : public FFastArraySerializerItem
 
 	FString GetDebugString() const;
 
-private:
+public:
 	friend FLyraInventoryList;
 	friend ULyraInventoryManagerComponent;
-public:
+
 	UPROPERTY()
 	TObjectPtr<ULyraInventoryItemInstance> Instance = nullptr;
 
@@ -117,7 +106,7 @@ public:
 	// Replicated list of items
 	UPROPERTY()
 	TArray<FLyraInventoryEntry> Entries;
-private:
+
 	UPROPERTY(NotReplicated)
 	TObjectPtr<UActorComponent> OwnerComponent;
 };
@@ -168,8 +157,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure)
 	int32 GetTotalItemCountByDefinition(TSubclassOf<ULyraInventoryItemDefinition> ItemDef) const;
-
-	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
 	bool ConsumeItemsByDefinition(TSubclassOf<ULyraInventoryItemDefinition> ItemDef, int32 NumToConsume);
 
 	//~UObject interface

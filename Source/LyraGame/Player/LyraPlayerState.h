@@ -3,16 +3,13 @@
 #pragma once
 
 #include "AbilitySystemInterface.h"
-#include "GenericTeamAgentInterface.h"
-#include "HAL/Platform.h"
-#include "Messages/LyraVerbMessage.h"
 #include "ModularPlayerState.h"
 #include "System/GameplayTagStack.h"
 #include "Teams/LyraTeamAgentInterface.h"
-#include "Templates/Casts.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "LyraPlayerState.generated.h"
+
+struct FLyraVerbMessage;
 
 class AController;
 class ALyraPlayerController;
@@ -66,7 +63,6 @@ public:
 	template <class T>
 	const T* GetPawnData() const { return Cast<T>(PawnData); }
 
-	UFUNCTION(BlueprintCallable)
 	void SetPawnData(const ULyraPawnData* InPawnData);
 
 	//~AActor interface

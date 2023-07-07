@@ -28,7 +28,7 @@
 #include "Misc/UObjectToken.h"
 #endif	// WITH_EDITOR
 
-namespace LyraHero
+namespace ETPHero
 {
 	static const float LookYawRate = 300.0f;
 	static const float LookPitchRate = 165.0f;
@@ -77,10 +77,9 @@ bool UETPRTSComponent::CanChangeInitState(UGameFrameworkComponentManager* Manage
 {
 	check(Manager);
 
-	const FLyraGameplayTags& InitTags = FLyraGameplayTags::Get();
 	APawn* Pawn = GetPawn<APawn>();
 
-	if (!CurrentState.IsValid() && DesiredState == InitTags.InitState_Spawned)
+	if (!CurrentState.IsValid() && DesiredState == LyraGameplayTags::InitState_Spawned)
 	{
 		// As long as we have a real pawn, let us transition
 		if (Pawn)
@@ -88,7 +87,7 @@ bool UETPRTSComponent::CanChangeInitState(UGameFrameworkComponentManager* Manage
 			return true;
 		}
 	}
-	else if (CurrentState == InitTags.InitState_Spawned && DesiredState == InitTags.InitState_DataAvailable)
+	else if (CurrentState == LyraGameplayTags::InitState_Spawned && DesiredState == LyraGameplayTags::InitState_DataAvailable)
 	{
 		// The player state is required.
 		if (!GetPlayerState<ALyraPlayerState>())
@@ -127,14 +126,14 @@ bool UETPRTSComponent::CanChangeInitState(UGameFrameworkComponentManager* Manage
 
 		return true;
 	}
-	else if (CurrentState == InitTags.InitState_DataAvailable && DesiredState == InitTags.InitState_DataInitialized)
+	else if (CurrentState == LyraGameplayTags::InitState_DataAvailable && DesiredState == LyraGameplayTags::InitState_DataInitialized)
 	{
 		// Wait for player state and extension component
 		ALyraPlayerState* LyraPS = GetPlayerState<ALyraPlayerState>();
 
-		return LyraPS && Manager->HasFeatureReachedInitState(Pawn, ULyraPawnExtensionComponent::NAME_ActorFeatureName, InitTags.InitState_DataInitialized);
+		return LyraPS && Manager->HasFeatureReachedInitState(Pawn, ULyraPawnExtensionComponent::NAME_ActorFeatureName, LyraGameplayTags::InitState_DataInitialized);
 	}
-	else if (CurrentState == InitTags.InitState_DataInitialized && DesiredState == InitTags.InitState_GameplayReady)
+	else if (CurrentState == LyraGameplayTags::InitState_DataInitialized && DesiredState == LyraGameplayTags::InitState_GameplayReady)
 	{
 		// TODO add ability initialization checks?
 		return true;
@@ -145,8 +144,7 @@ bool UETPRTSComponent::CanChangeInitState(UGameFrameworkComponentManager* Manage
 
 void UETPRTSComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState)
 {
-	const FLyraGameplayTags& InitTags = FLyraGameplayTags::Get();
-	if (CurrentState == FLyraGameplayTags::Get().InitState_DataAvailable && DesiredState == FLyraGameplayTags::Get().InitState_DataInitialized)
+	if (CurrentState == LyraGameplayTags::InitState_DataAvailable && DesiredState == LyraGameplayTags::InitState_DataInitialized)
 	{
 		APawn* Pawn = GetPawn<APawn>();
 		ALyraPlayerState* LyraPS = GetPlayerState<ALyraPlayerState>();
@@ -189,7 +187,7 @@ void UETPRTSComponent::OnActorInitStateChanged(const FActorInitStateChangedParam
 {
 	if (Params.FeatureName == ULyraPawnExtensionComponent::NAME_ActorFeatureName)
 	{
-		if (Params.FeatureState == FLyraGameplayTags::Get().InitState_DataInitialized)
+		if (Params.FeatureState == LyraGameplayTags::InitState_DataInitialized)
 		{
 			// If the extension component says all all other components are initialized, try to progress to next state
 			CheckDefaultInitialization();
@@ -199,8 +197,7 @@ void UETPRTSComponent::OnActorInitStateChanged(const FActorInitStateChangedParam
 
 void UETPRTSComponent::CheckDefaultInitialization()
 {
-	const FLyraGameplayTags& InitTags = FLyraGameplayTags::Get();
-	static const TArray<FGameplayTag> StateChain = { InitTags.InitState_Spawned, InitTags.InitState_DataAvailable, InitTags.InitState_DataInitialized, InitTags.InitState_GameplayReady };
+	static const TArray<FGameplayTag> StateChain = { LyraGameplayTags::InitState_Spawned, LyraGameplayTags::InitState_DataAvailable, LyraGameplayTags::InitState_DataInitialized, LyraGameplayTags::InitState_GameplayReady };
 
 	// This will try to progress from spawned (which is only set in BeginPlay) through the data initialization stages until it gets to gameplay ready
 	ContinueInitStateChain(StateChain);
@@ -214,7 +211,7 @@ void UETPRTSComponent::BeginPlay()
 	BindOnActorInitStateChanged(ULyraPawnExtensionComponent::NAME_ActorFeatureName, FGameplayTag(), false);
 
 	// Notifies that we are done spawning, then try the rest of initialization
-	ensure(TryToChangeInitState(FLyraGameplayTags::Get().InitState_Spawned));
+	ensure(TryToChangeInitState(LyraGameplayTags::InitState_Spawned));
 	CheckDefaultInitialization();
 }
 
@@ -252,8 +249,6 @@ void UETPRTSComponent::InitializePlayerInput(UInputComponent* PlayerInputCompone
 		{
 			if (const ULyraInputConfig* InputConfig = PawnData->InputConfig)
 			{
-				const FLyraGameplayTags& GameplayTags = FLyraGameplayTags::Get();
-	
 				// Register any default input configs with the settings so that they will be applied to the player during AddInputMappings
 				for (const FMappableConfigPair& Pair : DefaultInputConfigs)
 				{
@@ -272,11 +267,11 @@ void UETPRTSComponent::InitializePlayerInput(UInputComponent* PlayerInputCompone
 				TArray<uint32> BindHandles;
 				LyraIC->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ BindHandles);
 
-				LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, /*bLogIfNotFound=*/ false);
-				LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/ false);
-				LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Stick, ETriggerEvent::Triggered, this, &ThisClass::Input_LookStick, /*bLogIfNotFound=*/ false);
-				LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
-				LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_AutoRun, ETriggerEvent::Triggered, this, &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/ false);
+				LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, /*bLogIfNotFound=*/ false);
+				LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/ false);
+				LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_Look_Stick, ETriggerEvent::Triggered, this, &ThisClass::Input_LookStick, /*bLogIfNotFound=*/ false);
+				LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
+				LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_AutoRun, ETriggerEvent::Triggered, this, &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/ false);
 			}
 		}
 	}
@@ -427,12 +422,12 @@ void UETPRTSComponent::Input_LookStick(const FInputActionValue& InputActionValue
 
 	if (Value.X != 0.0f)
 	{
-		Pawn->AddControllerYawInput(Value.X * LyraHero::LookYawRate * World->GetDeltaSeconds());
+		Pawn->AddControllerYawInput(Value.X * ETPHero::LookYawRate * World->GetDeltaSeconds());
 	}
 
 	if (Value.Y != 0.0f)
 	{
-		Pawn->AddControllerPitchInput(Value.Y * LyraHero::LookPitchRate * World->GetDeltaSeconds());
+		Pawn->AddControllerPitchInput(Value.Y * ETPHero::LookPitchRate * World->GetDeltaSeconds());
 	}
 }
 

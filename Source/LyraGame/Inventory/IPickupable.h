@@ -2,15 +2,14 @@
 
 #pragma once
 
-#include "Containers/Array.h"
-#include "HAL/Platform.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Templates/SubclassOf.h"
 #include "UObject/Interface.h"
-#include "UObject/ScriptInterface.h"
-#include "UObject/UObjectGlobals.h"
 
+#include "UObject/ObjectPtr.h"
 #include "IPickupable.generated.h"
+
+template <typename InterfaceType> class TScriptInterface;
 
 class AActor;
 class ULyraInventoryItemDefinition;
@@ -25,10 +24,10 @@ struct LYRAGAME_API FPickupTemplate
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 StackCount = 1;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ULyraInventoryItemDefinition> ItemDef;
 };
 
@@ -38,7 +37,7 @@ struct LYRAGAME_API FPickupInstance
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<ULyraInventoryItemInstance> Item = nullptr;
 };
 
@@ -48,10 +47,10 @@ struct LYRAGAME_API FInventoryPickup
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FPickupInstance> Instances;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FPickupTemplate> Templates;
 };
 

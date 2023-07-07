@@ -31,7 +31,6 @@ private:
 };
 
 /**  */
-//UINTERFACE(MinimalAPI, meta = (CannotImplementInterfaceInBlueprint))
 UINTERFACE(MinimalAPI)
 class UInteractableTarget : public UInterface
 {

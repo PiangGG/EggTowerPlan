@@ -4,7 +4,6 @@
 
 #include "Inventory/LyraInventoryItemDefinition.h"
 #include "Templates/SubclassOf.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "InventoryFragment_EquippableItem.generated.h"
 
@@ -12,7 +11,7 @@ class ULyraEquipmentDefinition;
 class UObject;
 
 UCLASS()
-class LYRAGAME_API UInventoryFragment_EquippableItem : public ULyraInventoryItemFragment
+class UInventoryFragment_EquippableItem : public ULyraInventoryItemFragment
 {
 	GENERATED_BODY()
 

@@ -3,17 +3,8 @@
 #include "LyraSettingKeyboardInput.h"
 
 #include "../LyraSettingsLocal.h"
-#include "Containers/UnrealString.h"
-#include "Delegates/Delegate.h"
-#include "GameSetting.h"
-#include "GameSettingFilterState.h"
-#include "Internationalization/Internationalization.h"
-#include "Misc/AssertionMacros.h"
 #include "Player/LyraLocalPlayer.h"
 #include "PlayerMappableInputConfig.h"
-#include "Templates/Casts.h"
-#include "UObject/NameTypes.h"
-#include "UObject/UnrealNames.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraSettingKeyboardInput)
 

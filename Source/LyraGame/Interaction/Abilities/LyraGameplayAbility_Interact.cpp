@@ -2,12 +2,7 @@
 
 #include "LyraGameplayAbility_Interact.h"
 
-#include "Abilities/GameplayAbilityTypes.h"
 #include "AbilitySystemComponent.h"
-#include "Containers/EnumAsByte.h"
-#include "Engine/EngineTypes.h"
-#include "GameFramework/Actor.h"
-#include "GameplayTagContainer.h"
 #include "Interaction/IInteractableTarget.h"
 #include "Interaction/InteractionStatics.h"
 #include "Interaction/Tasks/AbilityTask_GrantNearbyInteraction.h"
@@ -15,9 +10,6 @@
 #include "Player/LyraPlayerController.h"
 #include "UI/IndicatorSystem/IndicatorDescriptor.h"
 #include "UI/IndicatorSystem/LyraIndicatorManagerComponent.h"
-#include "UObject/NameTypes.h"
-#include "UObject/ObjectPtr.h"
-#include "UObject/ScriptInterface.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraGameplayAbility_Interact)
 
@@ -48,7 +40,7 @@ void ULyraGameplayAbility_Interact::ActivateAbility(const FGameplayAbilitySpecHa
 
 void ULyraGameplayAbility_Interact::UpdateInteractions(const TArray<FInteractionOption>& InteractiveOptions)
 {
-	if (AController* PC = GetControllerFromActorInfo())
+	if (ALyraPlayerController* PC = GetLyraPlayerControllerFromActorInfo())
 	{
 		if (ULyraIndicatorManagerComponent* IndicatorManager = ULyraIndicatorManagerComponent::GetComponent(PC))
 		{

@@ -6,7 +6,6 @@
 #include "Interaction/IInteractableTarget.h"
 #include "Interaction/InteractionOption.h"
 #include "Inventory/IPickupable.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "LyraWorldCollectable.generated.h"
 
@@ -28,12 +27,6 @@ public:
 	virtual void GatherInteractionOptions(const FInteractionQuery& InteractQuery, FInteractionOptionBuilder& InteractionBuilder) override;
 	virtual FInventoryPickup GetPickupInventory() const override;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "ETP|CoreUnit")
-	UMaterialInterface* Overlaymaterial;
-	
-	UMaterialInterface* GetInteractioningMaterial_Implementation()override;
-
-	void SetSelfInteractioning_Implementation(bool bInteractioning) override;
 protected:
 	UPROPERTY(EditAnywhere)
 	FInteractionOption Option;

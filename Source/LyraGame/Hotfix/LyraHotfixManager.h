@@ -2,14 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Misc/Paths.h"
-#include "UObject/ObjectMacros.h"
-#include "UObject/ObjectKey.h"
 #include "OnlineHotfixManager.h"
-#include "Engine/EngineTypes.h"
-#include "TimerManager.h"
-#include "Tickable.h"
 #include "Misc/CoreDelegates.h"
 #include "Containers/Ticker.h"
 #include "LyraHotfixManager.generated.h"

@@ -4,10 +4,6 @@
 
 #include "EnhancedActionKeyMapping.h"
 #include "GameSettingValue.h"
-#include "HAL/Platform.h"
-#include "InputCoreTypes.h"
-#include "Internationalization/Text.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "LyraSettingKeyboardInput.generated.h"
 

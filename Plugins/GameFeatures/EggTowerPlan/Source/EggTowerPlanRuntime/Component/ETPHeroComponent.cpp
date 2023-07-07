@@ -17,6 +17,8 @@
 #include "GameFramework/PlayerInput.h"
 #include "EnhancedPlayerInput.h"
 #include "PlayerMappableInputConfig.h"
+#include "Input/LyraMappableConfigPair.h"
+
 namespace ETPRTS
 {
 	static const float LookYawRate = 300.0f;
@@ -94,8 +96,7 @@ bool UETPHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manag
 void UETPHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	FGameplayTag DesiredState)
 {
-	const FLyraGameplayTags& InitTags = FLyraGameplayTags::Get();
-	if (CurrentState == FLyraGameplayTags::Get().InitState_DataAvailable && DesiredState == FLyraGameplayTags::Get().InitState_DataInitialized)
+	if (CurrentState == LyraGameplayTags::InitState_DataAvailable && DesiredState == LyraGameplayTags::InitState_DataInitialized)
 	{
 		APawn* Pawn = GetPawn<APawn>();
 		ALyraPlayerState* LyraPS = GetPlayerState<ALyraPlayerState>();
@@ -173,8 +174,6 @@ void UETPHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 	
 	if (const ULyraInputConfig* InputConfig = myInputConfig)
 	{
-		const FLyraGameplayTags& GameplayTags = FLyraGameplayTags::Get();
-	
 		// Register any default input configs with the settings so that they will be applied to the player during AddInputMappings
 		for (const FMappableConfigPair& Pair : DefaultInputConfigs)
 		{
@@ -193,11 +192,11 @@ void UETPHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 		TArray<uint32> BindHandles;
 		LyraIC->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ BindHandles);
 
-		LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, /*bLogIfNotFound=*/ false);
-		LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/ false);
-		LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Stick, ETriggerEvent::Triggered, this, &ThisClass::Input_LookStick, /*bLogIfNotFound=*/ false);
-		LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
-		LyraIC->BindNativeAction(InputConfig, GameplayTags.InputTag_AutoRun, ETriggerEvent::Triggered, this, &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/ false);
+		LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, /*bLogIfNotFound=*/ false);
+		LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/ false);
+		LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_Look_Stick, ETriggerEvent::Triggered, this, &ThisClass::Input_LookStick, /*bLogIfNotFound=*/ false);
+		LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
+		LyraIC->BindNativeAction(InputConfig, LyraGameplayTags::InputTag_AutoRun, ETriggerEvent::Triggered, this, &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/ false);
 	}
 	
 

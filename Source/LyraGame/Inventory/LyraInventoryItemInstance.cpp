@@ -2,12 +2,8 @@
 
 #include "LyraInventoryItemInstance.h"
 
-#include "Containers/Array.h"
-#include "GameplayTagContainer.h"
 #include "Inventory/LyraInventoryItemDefinition.h"
-#include "Misc/AssertionMacros.h"
 #include "Net/UnrealNetwork.h"
-#include "UObject/Class.h"
 
 #if UE_WITH_IRIS
 #include "Iris/ReplicationSystem/ReplicationFragmentUtil.h"

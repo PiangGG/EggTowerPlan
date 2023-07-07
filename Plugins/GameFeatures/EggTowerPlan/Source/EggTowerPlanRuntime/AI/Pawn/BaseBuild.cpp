@@ -194,7 +194,7 @@ void ABaseBuild::OnDeathStarted(AActor* OwningActor)
 			if (AbilitySystemComponent->GetAvatarActor() == GetOwner())
 			{
 				FGameplayTagContainer AbilityTypesToIgnore;
-				AbilityTypesToIgnore.AddTag(FLyraGameplayTags::Get().Ability_Behavior_SurvivesDeath);
+				AbilityTypesToIgnore.AddTag(LyraGameplayTags::Ability_Behavior_SurvivesDeath);
 
 				AbilitySystemComponent->CancelAbilities(nullptr, &AbilityTypesToIgnore);
 				AbilitySystemComponent->ClearAbilityInput();
